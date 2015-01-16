@@ -2,7 +2,7 @@ package lv.edi.EDI_3DAtA.common;
 
 import java.util.ArrayList;
 
-import org.ejml.data.DenseMatrix64F;
+import boofcv.struct.image.ImageUInt8;
 
 /**
  * Class for volumetric data representation
@@ -11,13 +11,13 @@ import org.ejml.data.DenseMatrix64F;
  */
 public class VolumetricData{
 	
-	private ArrayList<DenseMatrix64F> layers;
+	private ArrayList<ImageUInt8> layers;
 	
 	/**
 	 * Initializes Volumetric Data with initial capacity of layers 10
 	 */
 	public VolumetricData(){
-		layers = new ArrayList<DenseMatrix64F>(10);
+		layers = new ArrayList<ImageUInt8>(10);
 	}
 	
 	/**
@@ -25,22 +25,22 @@ public class VolumetricData{
 	 * @param initSize Number of initial layers for volumetric data
 	 */
 	public VolumetricData(int initSize){
-		layers = new ArrayList<DenseMatrix64F>(initSize);
+		layers = new ArrayList<ImageUInt8>(initSize);
 	}
 	
 	/**
 	 * Ads layer to volumetric data.
 	 * @param layer Layer data 2D matrix.
 	 */
-	public void addLayer(DenseMatrix64F layer){
+	public void addLayer(ImageUInt8 layer){
 		layers.add(layer);
 	}
 	/**
 	 * Method for getting one layer data
 	 * @param index index of the layer
-	 * @return DenseMatrix64F one layer data
+	 * @return ImageUInt8 one layer data
 	 */
-	public DenseMatrix64F getLayer(int index){
+	public ImageUInt8 getLayer(int index){
 		return layers.get(index);
 	}
 	
