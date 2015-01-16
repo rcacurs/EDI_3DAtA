@@ -481,13 +481,13 @@ public class MetaImage {
 				for(int j=0; j<data[0].length; j++){ // y axis
 					for(int k=0; k<data.length; k++){           // x axis
 						try{
-							readByteL = in.read();
-							readByteH = in.read();
+							readByteL = in.read() & 0xff;
+							readByteH = in.read() & 0xff;
 							if(!isBinaryDataByteOrderMSB()){
-								data[k][j]=(int)((short)readByteL+((short)readByteH)*256);
+								data[k][j]=(int) (readByteL | (readByteH*256));
 									
 							} else{
-								data[k][j]=(int)((short)readByteH+((short)readByteL)*256);
+								data[k][j]=(int)(readByteH | (readByteL*256));
 							}
 							if(data[k][j]>max_value){
 								max_value=data[k][j];
