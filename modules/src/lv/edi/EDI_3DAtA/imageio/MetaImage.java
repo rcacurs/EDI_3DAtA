@@ -2,11 +2,17 @@ package lv.edi.EDI_3DAtA.imageio;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import lv.edi.EDI_3DAtA.common.VolumetricData;
+
 import org.ejml.data.DenseMatrix64F;
+
+import boofcv.struct.image.ImageUInt8;
+
 
 /**
  * @author Ričards Cacurs
@@ -17,7 +23,7 @@ public class MetaImage {
 	private String objectType;
 	private int nDims;
 	private boolean isBinaryData;
-	private boolean isBinaryDataByteOrderMSB;
+	private boolean isBinaryDataByteOrderMSB=false;
 	private boolean isCompressedData;
 	private DenseMatrix64F transformMatrix;
 	private DenseMatrix64F offset;
@@ -450,6 +456,71 @@ public class MetaImage {
 		str+="ElementType: "+getElementType()+"\n\n";
 		return str;
 	}
+	/**
+	 * Function for getting volumetric data from Meta Image file. Currently supports only meta images that are stored
+	 * And currently assumes RAS anatomical orientation.
+	 * in META_SHORT type
+	 * @return VolumetricData object acquired from meta image file. Returns null if data cannot be acquired.
+	 */
+	public VolumetricData getVolumetricData(){
+		FileInputStream in;
+		int readByteL;   // low address byte
+		int readByteH;   // high address byte
+		VolumetricData volData = new VolumetricData();
+		if((elementDataFile!=null)&&(dimSize!=null)){
+			try{
+				in = new FileInputStream(elementDataFile);
+			} catch(FileNotFoundException ex){
+				return null;
+			}
 	
+			for(int i=0; i<dimSize.get(2,0); i++){ // z axis
+				int max_value=0;
+				int min_value=Integer.MAX_VALUE;
+				int[][] data = new int[(int)dimSize.get(1,0)][(int)dimSize.get(2,0)];
+				for(int j=0; j<data[0].length; j++){ // y axis
+					for(int k=0; k<data.length; k++){           // x axis
+						try{
+							readByteL = in.read();
+							readByteH = in.read();
+							if(!isBinaryDataByteOrderMSB()){
+								data[k][j]=(int)((short)readByteL+((short)readByteH)*256);
+									
+							} else{
+								data[k][j]=(int)((short)readByteH+((short)readByteL)*256);
+							}
+							if(data[k][j]>max_value){
+								max_value=data[k][j];
+							}
+							if(data[k][j]<min_value){
+								min_value=data[k][j];
+							}
+						}catch(IOException ex){
+							try {
+								in.close();
+							} catch (IOException e) {
+								return null;
+							}
+						}
+					}
+				}
+				ImageUInt8 image = new ImageUInt8(data.length, data[0].length);
+				for(int j=0; j<data[0].length; j++){
+					for(int k=0; k<data.length; k++){
+						image.set(k, j, (int)(255*(((double)(data[k][j]-min_value))/(max_value-min_value))));
+					}
+				}
+				volData.addLayer(image);
+			}
+			try {
+				in.close();
+			} catch (IOException e) {
+
+			}
+			return volData;
+		} else{
+			return null;
+		}
+	}
 	
 }
