@@ -58,7 +58,6 @@ public class VolumetricData{
 	 */
 	public String layerToString(int layer){
 		if(layer>=0 && layer<layers.size()){
-			String output="";
 			StringBuilder sb = new StringBuilder();
 			ImageUInt8 layerI = layers.get(layer);
 			for(int i=0; i<layerI.height; i++){
