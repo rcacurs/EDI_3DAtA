@@ -283,6 +283,9 @@ public class MetaImage {
 		case "MET_SHORT":
 			this.elementType=MetaElementType.MET_SHORT;
 			break;
+		case "MET_UCHAR":
+			this.elementType=MetaElementType.MET_UCHAR;
+			break;
 		default:
 			this.elementType = null;
 			break;		
@@ -502,19 +505,23 @@ public class MetaImage {
 		try{
 			in = new FileInputStream(elementDataFile);
 			FileChannel inChannel = in.getChannel();
-			
+			long oneLayerSize;
+			ByteBuffer buffer;
+			ShortBuffer shortBuffer;
+			short max_value;
+			short min_value;
 			switch(elementType){
 			case MET_SHORT:
-				long oneLayerSize = 2*(int)dimSize.get(0,0)*(int)dimSize.get(1, 0);
-				ByteBuffer buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, layer*oneLayerSize, oneLayerSize);
+				oneLayerSize = 2*(int)dimSize.get(0,0)*(int)dimSize.get(1, 0);
+				buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, layer*oneLayerSize, oneLayerSize);
 				if(!isBinaryDataByteOrderMSB){
 					buffer.order(ByteOrder.LITTLE_ENDIAN);
 				} else{
 					buffer.order(ByteOrder.BIG_ENDIAN);
 				}
-				ShortBuffer shortBuffer = buffer.asShortBuffer();
-				short max_value=-Short.MAX_VALUE;
-				short min_value=Short.MAX_VALUE;
+				shortBuffer = buffer.asShortBuffer();
+				max_value=-Short.MAX_VALUE;
+				min_value=Short.MAX_VALUE;
 				for(int i=0; i<shortBuffer.limit(); i++){
 					if(shortBuffer.get(i)<min_value){
 						min_value = shortBuffer.get(i);
@@ -525,9 +532,25 @@ public class MetaImage {
 				}
 				for(int i=0; i<(int)dimSize.get(1,0); i++){
 					for(int j=0; j<(int)dimSize.get(0,0); j++){
-						image.set(j, i,(int)Math.ceil(255*(((float)shortBuffer.get()-(float)min_value)/((float)max_value-(float)min_value))));
+						image.set(j, i,(int)(255*(((float)shortBuffer.get()-min_value)/(max_value-min_value))));
 					}
 				}
+				break;
+			case MET_UCHAR:
+				oneLayerSize = (int)dimSize.get(0,0)*(int)dimSize.get(1, 0);
+				buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, layer*oneLayerSize, oneLayerSize);
+				if(!isBinaryDataByteOrderMSB){
+					buffer.order(ByteOrder.LITTLE_ENDIAN);
+				} else{
+					buffer.order(ByteOrder.BIG_ENDIAN);
+				}
+				
+				for(int i=0; i<(int)dimSize.get(1,0); i++){
+					for(int j=0; j<(int)dimSize.get(0,0); j++){
+						image.set(j, i, ((int)buffer.get()) & 0xff);
+					}
+				}
+				
 				break;
 			default:
 				try{ 
