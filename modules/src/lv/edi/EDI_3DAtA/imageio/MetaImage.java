@@ -494,7 +494,7 @@ public class MetaImage {
 	
 	/**
 	 * Function reads one layer data from .raw file and returns as ImageUInt8 data. Current implementation 
-	 * work only on data that is that are stored as META_SHORT. If layer cannot be read (for example ifindex is greater
+	 * work only on data that is that are stored as META_SHORT. If layer cannot be read (for example if index is greater
 	 * that amount of layers or) function return null.
 	 * @param layer layer index which to read.
 	 * @return IMageUInt8 one layer image.
