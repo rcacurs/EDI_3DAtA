@@ -8,8 +8,12 @@ package lv.edi.EDI_3DAtA.imageio;
  */
 public enum MetaElementType {
 	/**
-	 * data type consisting 8 bit signed short.
+	 * data type consisting 16 bit signed short data.
 	 */
-	MET_SHORT;
+	MET_SHORT,
+	/**
+	 * data type representing 8 bit unsigned data
+	 */
+	MET_UCHAR
 
 }
