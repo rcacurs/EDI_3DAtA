@@ -468,8 +468,6 @@ public class MetaImage {
 	 */
 	public VolumetricData getVolumetricData(){
 		FileInputStream in;
-		int readByteL;   // low address byte
-		int readByteH;   // high address byte
 		VolumetricData volData = new VolumetricData();
 		if((elementDataFile!=null)&&(dimSize!=null)){
 			try{
