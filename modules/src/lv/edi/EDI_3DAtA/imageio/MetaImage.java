@@ -525,7 +525,7 @@ public class MetaImage {
 				}
 				for(int i=0; i<(int)dimSize.get(1,0); i++){
 					for(int j=0; j<(int)dimSize.get(0,0); j++){
-						image.set(j, i,(int)(255*(((double)shortBuffer.get()-min_value)/(max_value-min_value))));
+						image.set(j, i,(int)Math.ceil(255*(((float)shortBuffer.get()-(float)min_value)/((float)max_value-(float)min_value))));
 					}
 				}
 				break;
