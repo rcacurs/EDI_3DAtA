@@ -464,9 +464,9 @@ public class MetaImage {
 		return str;
 	}
 	/**
-	 * Function for getting volumetric data from Meta Image file. Currently supports only meta images that are stored
+	 * Function for getting volumetric data from Meta Image file. Currently supports only meta images that are stored in MET_SHORT type and MET_UCHAR
 	 * And currently assumes RAS anatomical orientation.
-	 * in META_SHORT type
+	 * 
 	 * @return VolumetricData object acquired from meta image file. Returns null if data cannot be acquired.
 	 */
 	public VolumetricData getVolumetricData(){
