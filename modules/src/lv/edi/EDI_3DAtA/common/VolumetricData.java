@@ -44,5 +44,13 @@ public class VolumetricData{
 		return layers.get(index);
 	}
 	
+	/**
+	 * Method return number of layers
+	 * @return int number of layers
+	 */
+	public int size(){
+		return layers.size();
+	}
+	
 	
 }
