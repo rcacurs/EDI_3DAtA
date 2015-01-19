@@ -54,7 +54,8 @@ public class VolumetricData{
 	
 	/**
 	 * Method return string representation of one layer, formatted as .csv.
-	 * @param layer integer representing layer index. If layer number exceeds actual number, empty string is returned
+	 * @param layer integer representing layer index. If index number exceeds actual layer count empty string is returned.
+	 * @return String string representation of specified layer in CSV format. 
 	 */
 	public String layerToString(int layer){
 		if(layer>=0 && layer<layers.size()){
