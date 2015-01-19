@@ -477,54 +477,18 @@ public class MetaImage {
 			} catch(FileNotFoundException ex){
 				return null;
 			}
-	
-			for(int i=0; i<dimSize.get(2,0); i++){ // z axis
-				int max_value=0;
-				int min_value=Integer.MAX_VALUE;
-				int[][] data = new int[(int)dimSize.get(0,0)][(int)dimSize.get(1,0)];
-				for(int j=0; j<data[0].length; j++){ // y axis
-					for(int k=0; k<data.length; k++){           // x axis
-						try{
-							readByteL = in.read() & 0xff;
-							readByteH = in.read() & 0xff;
-							if(!isBinaryDataByteOrderMSB()){
-								data[k][j]=(int) (readByteL | (readByteH*256));
-									
-							} else{
-								data[k][j]=(int)(readByteH | (readByteL*256));
-							}
-							if(data[k][j]>max_value){
-								max_value=data[k][j];
-							}
-							if(data[k][j]<min_value){
-								min_value=data[k][j];
-							}
-						}catch(IOException ex){
-							try {
-								in.close();
-							} catch (IOException e) {
-								return null;
-							}
-						}
-					}
-				}
-				ImageUInt8 image = new ImageUInt8(data.length, data[0].length);
-				for(int j=0; j<data[0].length; j++){
-					for(int k=0; k<data.length; k++){
-						image.set(k, j, (int)(255*(((double)(data[k][j]-min_value))/(max_value-min_value))));
-					}
-				}
-				volData.addLayer(image);
+			for(int i=0; i<dimSize.get(2,0); i++){ 		
+				volData.addLayer(getLayerImage(i));
 			}
 			try {
 				in.close();
 			} catch (IOException e) {
 
 			}
-			return volData;
 		} else{
 			return null;
 		}
+		return volData;
 	}
 	
 	/**
