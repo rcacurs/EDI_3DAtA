@@ -6,6 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
+import java.nio.channels.FileChannel;
 
 import lv.edi.EDI_3DAtA.common.VolumetricData;
 
@@ -477,7 +481,7 @@ public class MetaImage {
 			for(int i=0; i<dimSize.get(2,0); i++){ // z axis
 				int max_value=0;
 				int min_value=Integer.MAX_VALUE;
-				int[][] data = new int[(int)dimSize.get(1,0)][(int)dimSize.get(2,0)];
+				int[][] data = new int[(int)dimSize.get(0,0)][(int)dimSize.get(1,0)];
 				for(int j=0; j<data[0].length; j++){ // y axis
 					for(int k=0; k<data.length; k++){           // x axis
 						try{
@@ -523,4 +527,63 @@ public class MetaImage {
 		}
 	}
 	
+	/**
+	 * Function reads one layer data from .raw file and returns as ImageUInt8 data. Current implementation 
+	 * work only on data that is that are stored as META_SHORT. If layer cannot be read (for example ifindex is greater
+	 * that amount of layers or) function return null.
+	 * @param layer layer index which to read.
+	 * @return IMageUInt8 one layer image.
+	 */
+	public ImageUInt8 getLayerImage(int layer){
+		FileInputStream in;
+		ImageUInt8 image = new ImageUInt8((int)dimSize.get(0, 0), (int)dimSize.get(1, 0));
+		try{
+			in = new FileInputStream(elementDataFile);
+			FileChannel inChannel = in.getChannel();
+			
+			switch(elementType){
+			case MET_SHORT:
+				long oneLayerSize = 2*(int)dimSize.get(0,0)*(int)dimSize.get(1, 0);
+				ByteBuffer buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, layer*oneLayerSize, oneLayerSize);
+				if(!isBinaryDataByteOrderMSB){
+					buffer.order(ByteOrder.LITTLE_ENDIAN);
+				} else{
+					buffer.order(ByteOrder.BIG_ENDIAN);
+				}
+				ShortBuffer shortBuffer = buffer.asShortBuffer();
+				short max_value=-Short.MAX_VALUE;
+				short min_value=Short.MAX_VALUE;
+				for(int i=0; i<shortBuffer.limit(); i++){
+					if(shortBuffer.get(i)<min_value){
+						min_value = shortBuffer.get(i);
+					}
+					if(shortBuffer.get(i)>max_value){
+						max_value=shortBuffer.get(i);
+					}
+				}
+				for(int i=0; i<(int)dimSize.get(1,0); i++){
+					for(int j=0; j<(int)dimSize.get(0,0); j++){
+						image.set(j, i,(int)(255*(((double)shortBuffer.get()-min_value)/(max_value-min_value))));
+					}
+				}
+				break;
+			default:
+				try{ 
+					in.close();
+				} catch(IOException ex){
+					return null;
+				}
+				return null;
+			}
+		} catch(IOException ex){
+			return null;
+		}
+		
+		try{
+			in.close();
+		} catch(IOException ex){
+			return null;
+		}
+		return image;
+	}
 }
