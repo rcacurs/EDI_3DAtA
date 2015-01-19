@@ -52,5 +52,29 @@ public class VolumetricData{
 		return layers.size();
 	}
 	
+	/**
+	 * Method return string representation of one layer, formatted as .csv.
+	 * @param layer integer representing layer index. If layer number exceeds actual number, empty string is returned
+	 */
+	public String layerToString(int layer){
+		if(layer>=0 && layer<layers.size()){
+			String output="";
+			StringBuilder sb = new StringBuilder();
+			ImageUInt8 layerI = layers.get(layer);
+			for(int i=0; i<layerI.height; i++){
+				for(int j=0; j<layerI.width; j++){
+					sb.append(layerI.get(j, i));
+					if(j<(layerI.width-1)){
+						sb.append(",");
+					}
+				}
+				sb.append("\n");
+			}
+			return sb.toString();
+		}else{
+			return "";
+		}
+	}
+	
 	
 }
