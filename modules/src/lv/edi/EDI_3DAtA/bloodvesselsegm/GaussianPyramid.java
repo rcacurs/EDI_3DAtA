@@ -25,8 +25,6 @@ public class GaussianPyramid {
 	public GaussianPyramid(ImageUInt8 src, int numberOfLayers, int kernelWidth, float kernelSigma){
 		layers = new ArrayList<ImageUInt8>(numberOfLayers);
 		Kernel2D_I32 kernel = FactoryKernelGaussian.gaussian2D(ImageUInt8.class, 1.0, (kernelWidth-1)/2);
-		System.out.println("Kernel width"+kernel.getWidth());
-		System.out.println(kernel.toString());
 		layers.add(src);
 		for(int i=1; i<numberOfLayers; i++){
 			ImageUInt8 output = new ImageUInt8(layers.get(i-1).width, layers.get(i-1).height);
