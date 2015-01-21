@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import boofcv.alg.filter.convolve.GConvolveImageOps;
 import boofcv.factory.filter.kernel.FactoryKernelGaussian;
-import boofcv.struct.convolve.Kernel2D_F64;
 import boofcv.struct.convolve.Kernel2D_I32;
 import boofcv.struct.image.ImageUInt8;
 
@@ -25,7 +24,7 @@ public class GaussianPyramid {
 	 */
 	public GaussianPyramid(ImageUInt8 src, int numberOfLayers, int kernelWidth, float kernelSigma){
 		layers = new ArrayList<ImageUInt8>(numberOfLayers);
-		Kernel2D_I32 kernel = FactoryKernelGaussian.gaussian2D(ImageUInt8.class, 1.0, 5);
+		Kernel2D_I32 kernel = FactoryKernelGaussian.gaussian2D(ImageUInt8.class, 1.0, (kernelWidth-1)/2);
 		System.out.println("Kernel width"+kernel.getWidth());
 		System.out.println(kernel.toString());
 		layers.add(src);
