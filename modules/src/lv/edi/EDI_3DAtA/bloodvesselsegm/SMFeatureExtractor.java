@@ -48,7 +48,7 @@ public class SMFeatureExtractor {
 	 * Function for setting feature extractor filter-bank from .csv file containing
 	 * filter kernel values.
 	 * @param filterBankFileName path to the file. One row of file represents one filter values
-	 * Values for each kernel must be specified in Row-Maj order.
+	 * Values for each kernel must be specified in Col-Maj order.
 	 * @param kernelRows number of filter kernel rows
 	 * @param kernelCols number of filter kernel columns
 	 */
@@ -65,9 +65,9 @@ public class SMFeatureExtractor {
 			ImageFloat32 filter = new ImageFloat32(kernelCols, kernelRows);
 			lineElements = line.split(",");
 			if(lineElements.length==(kernelRows*kernelCols)){
-				for(int i=0; i<kernelRows; i++){
-					for(int j=0 ;j<kernelCols; j++){
-						filter.set(j, i, Float.parseFloat(lineElements[kernelCols*i+j]));
+				for(int i=0; i<kernelCols; i++){
+					for(int j=0 ;j<kernelRows; j++){
+						filter.set(i, j, Float.parseFloat(lineElements[kernelRows*i+j]));
 					}
 				}
 				filterBank.add(filter);
