@@ -15,6 +15,7 @@ import lv.edi.EDI_3DAtA.common.VolumetricData;
 
 import org.ejml.data.DenseMatrix64F;
 
+import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 
 
@@ -497,11 +498,11 @@ public class MetaImage {
 	 * work only on data that is that are stored as META_SHORT. If layer cannot be read (for example if index is greater
 	 * that amount of layers or) function return null.
 	 * @param layer layer index which to read.
-	 * @return IMageUInt8 one layer image.
+	 * @return ImageFloat32 one layer image.
 	 */
-	public ImageUInt8 getLayerImage(int layer){
+	public ImageFloat32 getLayerImage(int layer){
 		FileInputStream in;
-		ImageUInt8 image = new ImageUInt8((int)dimSize.get(0, 0), (int)dimSize.get(1, 0));
+		ImageFloat32 image = new ImageFloat32((int)dimSize.get(0, 0), (int)dimSize.get(1, 0));
 		try{
 			in = new FileInputStream(elementDataFile);
 			FileChannel inChannel = in.getChannel();
@@ -532,7 +533,7 @@ public class MetaImage {
 				}
 				for(int i=0; i<(int)dimSize.get(1,0); i++){
 					for(int j=0; j<(int)dimSize.get(0,0); j++){
-						image.set(j, i,(int)(255*(((float)shortBuffer.get()-min_value)/(max_value-min_value))));
+						image.set(j, i,(float)Math.ceil(255*(((float)shortBuffer.get()-min_value)/(max_value-min_value))));
 					}
 				}
 				break;

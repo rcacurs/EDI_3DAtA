@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import boofcv.alg.filter.convolve.GConvolveImageOps;
 import boofcv.factory.filter.kernel.FactoryKernelGaussian;
+import boofcv.struct.convolve.Kernel2D_F32;
 import boofcv.struct.convolve.Kernel2D_I32;
+import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 
 /**
@@ -13,7 +15,7 @@ import boofcv.struct.image.ImageUInt8;
  *
  */
 public class GaussianPyramid {
-	private ArrayList<ImageUInt8> layers;
+	private ArrayList<ImageFloat32> layers;
 	
 	/** Constructor that creates Gaussian pyramid with specified parameters.
 	 * 
@@ -22,14 +24,14 @@ public class GaussianPyramid {
 	 * @param kernelWidth size for the Gaussian filter kernel in pixels
 	 * @param kernelSigma sigma parameter for Gaussian filter
 	 */
-	public GaussianPyramid(ImageUInt8 src, int numberOfLayers, int kernelWidth, float kernelSigma){
-		layers = new ArrayList<ImageUInt8>(numberOfLayers);
-		Kernel2D_I32 kernel = FactoryKernelGaussian.gaussian2D(ImageUInt8.class, 1.0, (kernelWidth-1)/2);
+	public GaussianPyramid(ImageFloat32 src, int numberOfLayers, int kernelWidth, float kernelSigma){
+		layers = new ArrayList<ImageFloat32>(numberOfLayers);
+		Kernel2D_F32 kernel = FactoryKernelGaussian.gaussian2D_F32(1.0, (kernelWidth-1)/2, true);
 		layers.add(src);
 		for(int i=1; i<numberOfLayers; i++){
-			ImageUInt8 output = new ImageUInt8(layers.get(i-1).width, layers.get(i-1).height);
+			ImageFloat32 output = new ImageFloat32(layers.get(i-1).width, layers.get(i-1).height);
 			GConvolveImageOps.convolveNormalized(kernel, layers.get(i-1), output);
-			ImageUInt8 outputDownsample = new ImageUInt8(layers.get(i-1).width/2, layers.get(i-1).height/2);
+			ImageFloat32 outputDownsample = new ImageFloat32(layers.get(i-1).width/2, layers.get(i-1).height/2);
 			for(int j=0; j<outputDownsample.height; j++){
 				for(int k=0; k<outputDownsample.width; k++){
 					outputDownsample.set(k, j, output.get(k*2, j*2));
@@ -42,10 +44,10 @@ public class GaussianPyramid {
 	/**
 	 * Function for accessing pyramid layer
 	 * @param layer layer index
-	 * @return ImageUInt8 returns specific layer. Returns null if index 
+	 * @return ImageFloat32 returns specific layer. Returns null if index 
 	 * larger that number of pyramid layers
 	 */
-	public ImageUInt8 getLayer(int layer){
+	public ImageFloat32 getLayer(int layer){
 		if(layer<layers.size() && layer>=0){
 			return layers.get(layer);
 		} else{
@@ -55,7 +57,7 @@ public class GaussianPyramid {
 	
 	/**
 	 *  Returns number of layers in Gaussian pyramid
-	 * @return Layer count in Gaussian pyramid
+	 * @return int Layer count in Gaussian pyramid
 	 */
 	public int size(){
 		return layers.size();
