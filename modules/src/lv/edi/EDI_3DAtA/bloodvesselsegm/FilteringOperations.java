@@ -24,6 +24,7 @@ public class FilteringOperations {
 		int kernelCenterC = (int)Math.floor((kernel.numCols-1)/2);
 		double sample;
 		double samplesum;
+		double kernelval;
 		for(int i=0; i<inputImage.numRows; i++){
 			for(int j=0; j<inputImage.numCols; j++){
 				
@@ -40,7 +41,10 @@ public class FilteringOperations {
 						} else{
 							sample = inputImage.get(pixelRowIndex, pixelColIndex);
 						}
-						samplesum+=sample*kernel.get(kernel.numRows-1-ki, kernel.numCols-1-kj); //kernel is flipped
+						kernelval=kernel.get(kernel.numRows-1-ki, kernel.numCols-1-kj);
+						if(kernelval!=0){
+							samplesum+=sample*kernelval; //kernel is flipped
+						}
 					}
 				}
 				output.set(i, j, samplesum);
