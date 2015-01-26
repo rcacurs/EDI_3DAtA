@@ -2,8 +2,8 @@ package lv.edi.EDI_3DAtA.common;
 
 import java.util.ArrayList;
 
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
+import org.ejml.data.DenseMatrix64F;
+
 
 /**
  * Class for volumetric data representation
@@ -12,13 +12,13 @@ import boofcv.struct.image.ImageUInt8;
  */
 public class VolumetricData{
 	
-	private ArrayList<ImageFloat32> layers;
+	private ArrayList<DenseMatrix64F> layers;
 	
 	/**
 	 * Initializes Volumetric Data with initial capacity of layers 10
 	 */
 	public VolumetricData(){
-		layers = new ArrayList<ImageFloat32>(10);
+		layers = new ArrayList<DenseMatrix64F>(10);
 	}
 	
 	/**
@@ -26,22 +26,22 @@ public class VolumetricData{
 	 * @param initSize Number of initial layers for volumetric data
 	 */
 	public VolumetricData(int initSize){
-		layers = new ArrayList<ImageFloat32>(initSize);
+		layers = new ArrayList<DenseMatrix64F>(initSize);
 	}
 	
 	/**
 	 * Ads layer to volumetric data.
 	 * @param layer Layer data 2D matrix.
 	 */
-	public void addLayer(ImageFloat32 layer){
+	public void addLayer(DenseMatrix64F layer){
 		layers.add(layer);
 	}
 	/**
 	 * Method for getting one layer data
 	 * @param index index of the layer
-	 * @return ImageFloat32 one layer data
+	 * @return DenseMatrix64F one layer data
 	 */
-	public ImageFloat32 getLayer(int index){
+	public DenseMatrix64F getLayer(int index){
 		return layers.get(index);
 	}
 	
@@ -61,11 +61,11 @@ public class VolumetricData{
 	public String layerToString(int layer){
 		if(layer>=0 && layer<layers.size()){
 			StringBuilder sb = new StringBuilder();
-			ImageFloat32 layerI = layers.get(layer);
-			for(int i=0; i<layerI.height; i++){
-				for(int j=0; j<layerI.width; j++){
-					sb.append(layerI.get(j, i));
-					if(j<(layerI.width-1)){
+			DenseMatrix64F layerI = layers.get(layer);
+			for(int i=0; i<layerI.numRows; i++){
+				for(int j=0; j<layerI.numCols; j++){
+					sb.append(layerI.get(i, j));
+					if(j<(layerI.numCols-1)){
 						sb.append(",");
 					}
 				}
