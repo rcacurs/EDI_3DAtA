@@ -49,7 +49,7 @@ public class ImageVisualization{
 	 * Function for creating window that displays DenseMatrix64F content
 	 * 
 	 * @param denseMatrix matrix to be visualized
-	 * @param JFrame object on which image is placed
+	 * @param frame object on which image is placed
 	 */
 	public static void imshow(DenseMatrix64F denseMatrix, JFrame frame){
 		frame.getContentPane().removeAll();
