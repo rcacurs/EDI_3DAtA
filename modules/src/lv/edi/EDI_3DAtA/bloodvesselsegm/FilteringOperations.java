@@ -1,6 +1,7 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 /**
  * 
@@ -91,6 +92,25 @@ public class FilteringOperations {
 			output.set(i, sampleSum);
 		}
 		return output;
+	}
+	
+	public static DenseMatrix64F gaussianBlur(DenseMatrix64F input, double sigmaSQ, int kernelSize){
+		DenseMatrix64F kernel = new DenseMatrix64F(1,kernelSize);
+		int kernelCenter = (int)(kernelSize-1)/2;
+		for(int i=0; i<kernelSize; i++){
+			kernel.set(i, Math.exp(-Math.pow(i-kernelCenter,2)/(2*sigmaSQ))/(Math.sqrt(2*Math.PI*sigmaSQ)));
+		}
+		// filter by rows
+		DenseMatrix64F rowFiltered = new DenseMatrix64F(input.numRows, input.numCols);
+		for(int i=0; i<input.numRows; i++){
+			CommonOps.insert(convolve1D(CommonOps.extract(input, i, i+1, 0, input.numCols), kernel), rowFiltered, i, 0);
+		}
+		// filter by columns
+		DenseMatrix64F colFiltered = new DenseMatrix64F(input.numRows, input.numCols);
+		for(int i=0; i<input.numCols; i++){
+			CommonOps.insert(convolve1D(CommonOps.extract(rowFiltered, 0, input.numRows, i, i+1), kernel), colFiltered, 0, i);
+		}
+		return colFiltered;
 	}
 
 }
