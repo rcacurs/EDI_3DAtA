@@ -52,5 +52,40 @@ public class FilteringOperations {
 		}
 		return output;
 	}
+	
+	public static DenseMatrix64F convolve1D(DenseMatrix64F input, DenseMatrix64F filter){
+		int filterCenter = (int)Math.floor((filter.getNumElements()-1)/2);
+		DenseMatrix64F output;
+		if(input.numCols==input.getNumElements()){ // form output based on input format
+			output = new DenseMatrix64F(1,input.getNumElements());
+		} else{
+			if(input.numRows==input.getNumElements()){
+				output = new DenseMatrix64F(input.getNumElements(),1);
+			} else{
+				return null;
+			}
+		}
+		double sampleSum=0;
+		double sample=0;
+		double filterVal=0;
+		for(int i=0; i<input.getNumElements(); i++){
+			sampleSum=0;
+			
+			for(int j=0; j<filter.getNumElements(); j++){
+				int sampleIndex=i+(j-filterCenter);
+				
+				if((sampleIndex<0)||
+					(sampleIndex>=input.getNumElements())){
+					sample = 0;
+				} else{
+					sample = input.get(sampleIndex);
+				}
+				filterVal=filter.get(filter.getNumElements()-1-j);
+				sampleSum+=sample*filterVal;
+			}
+			output.set(i, sampleSum);
+		}
+		return output;
+	}
 
 }
