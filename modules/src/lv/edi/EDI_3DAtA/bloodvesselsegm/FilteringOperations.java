@@ -52,7 +52,12 @@ public class FilteringOperations {
 		}
 		return output;
 	}
-	
+	/**
+	 * Function performing 1D convolution of two signals. Resulting convolution is same size as input.
+	 * @param input signal packed in DenseMatrix64F type (doesn't matter if column or row)
+	 * @param filter packed in DenseMatrix64F type (doesn't matter if column or row)
+	 * @return DenseMatrix64F convolution result. Format corresponds to format of the input.
+	 */
 	public static DenseMatrix64F convolve1D(DenseMatrix64F input, DenseMatrix64F filter){
 		int filterCenter = (int)Math.floor((filter.getNumElements()-1)/2);
 		DenseMatrix64F output;
