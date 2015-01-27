@@ -94,6 +94,13 @@ public class FilteringOperations {
 		return output;
 	}
 	
+	/**
+	 * Function that performs Gaussian blur on image given in type DenseMatrix64F
+	 * @param input image on which to perform gaussian blur
+	 * @param sigmaSQ standard deviation for gaussian filter (sigma^2)
+	 * @param kernelSize kernel size
+	 * @return returns Filtered image the same size as input image
+	 */
 	public static DenseMatrix64F gaussianBlur(DenseMatrix64F input, double sigmaSQ, int kernelSize){
 		DenseMatrix64F kernel = new DenseMatrix64F(1,kernelSize);
 		int kernelCenter = (int)(kernelSize-1)/2;
