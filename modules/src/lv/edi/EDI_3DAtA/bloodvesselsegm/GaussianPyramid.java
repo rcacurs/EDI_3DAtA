@@ -21,9 +21,10 @@ public class GaussianPyramid {
 	 */
 	public GaussianPyramid(DenseMatrix64F src, int numberOfLayers, int kernelWidth, float kernelSigmaSQ){
 		layers = new ArrayList<DenseMatrix64F>(numberOfLayers);
-		layers.add(src);
+		DenseMatrix64F output = FilteringOperations.gaussianBlur(src,1,5);
+		layers.add(output);
 		for(int i=1; i<numberOfLayers; i++){
-			DenseMatrix64F output = FilteringOperations.gaussianBlur(layers.get(i-1), kernelSigmaSQ, kernelWidth);;
+			output = FilteringOperations.gaussianBlur(layers.get(i-1), kernelSigmaSQ, kernelWidth);;
 			DenseMatrix64F outputDownsample = new DenseMatrix64F(layers.get(i-1).numRows/2, layers.get(i-1).numCols/2);
 			for(int j=0; j<outputDownsample.numRows; j++){
 				for(int k=0; k<outputDownsample.numCols; k++){
