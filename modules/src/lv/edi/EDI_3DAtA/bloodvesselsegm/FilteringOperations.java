@@ -107,6 +107,7 @@ public class FilteringOperations {
 		for(int i=0; i<kernelSize; i++){
 			kernel.set(i, Math.exp(-Math.pow(i-kernelCenter,2)/(2*sigmaSQ))/(Math.sqrt(2*Math.PI*sigmaSQ)));
 		}
+		CommonOps.divide(kernel, CommonOps.elementSum(kernel));
 		// filter by rows
 		DenseMatrix64F rowFiltered = new DenseMatrix64F(input.numRows, input.numCols);
 		for(int i=0; i<input.numRows; i++){
