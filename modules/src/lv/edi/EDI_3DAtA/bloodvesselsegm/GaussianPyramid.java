@@ -1,40 +1,33 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
 import java.util.ArrayList;
+import org.ejml.data.DenseMatrix64F;
 
-import boofcv.alg.filter.convolve.GConvolveImageOps;
-import boofcv.factory.filter.kernel.FactoryKernelGaussian;
-import boofcv.struct.convolve.Kernel2D_F32;
-import boofcv.struct.convolve.Kernel2D_I32;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
 
 /**
- * Class representing Gaussian pyramid of image. Each layer of pyramid is two times smaller
+ * Class representing Gaussian pyramid of image. Each layer of pyramid is two times smaller.
  * @author Ričards Cacurs
  *
  */
 public class GaussianPyramid {
-	private ArrayList<ImageFloat32> layers;
+	private ArrayList<DenseMatrix64F> layers;
 	
 	/** Constructor that creates Gaussian pyramid with specified parameters.
 	 * 
-	 * @param src input image, gaussian pyramid layer 0
+	 * @param src input image, gaussian pyramid layer 0 specified in DenseMatrix64F
 	 * @param numberOfLayers  number of layers for pyramid
 	 * @param kernelWidth size for the Gaussian filter kernel in pixels
-	 * @param kernelSigma sigma parameter for Gaussian filter
+	 * @param kernelSigmaSQ sigma parameter for Gaussian filter (STD)
 	 */
-	public GaussianPyramid(ImageFloat32 src, int numberOfLayers, int kernelWidth, float kernelSigma){
-		layers = new ArrayList<ImageFloat32>(numberOfLayers);
-		Kernel2D_F32 kernel = FactoryKernelGaussian.gaussian2D_F32(1.0, (kernelWidth-1)/2, true);
+	public GaussianPyramid(DenseMatrix64F src, int numberOfLayers, int kernelWidth, float kernelSigmaSQ){
+		layers = new ArrayList<DenseMatrix64F>(numberOfLayers);
 		layers.add(src);
 		for(int i=1; i<numberOfLayers; i++){
-			ImageFloat32 output = new ImageFloat32(layers.get(i-1).width, layers.get(i-1).height);
-			GConvolveImageOps.convolveNormalized(kernel, layers.get(i-1), output);
-			ImageFloat32 outputDownsample = new ImageFloat32(layers.get(i-1).width/2, layers.get(i-1).height/2);
-			for(int j=0; j<outputDownsample.height; j++){
-				for(int k=0; k<outputDownsample.width; k++){
-					outputDownsample.set(k, j, output.get(k*2, j*2));
+			DenseMatrix64F output = FilteringOperations.gaussianBlur(layers.get(i-1), kernelSigmaSQ, kernelWidth);;
+			DenseMatrix64F outputDownsample = new DenseMatrix64F(layers.get(i-1).numRows/2, layers.get(i-1).numCols/2);
+			for(int j=0; j<outputDownsample.numRows; j++){
+				for(int k=0; k<outputDownsample.numCols; k++){
+					outputDownsample.set(j, k, output.get(j*2, k*2));
 				}
 			}
 			layers.add(outputDownsample);
@@ -44,10 +37,10 @@ public class GaussianPyramid {
 	/**
 	 * Function for accessing pyramid layer
 	 * @param layer layer index
-	 * @return ImageFloat32 returns specific layer. Returns null if index 
+	 * @return DenseMatrix64F returns specific layer. Returns null if index 
 	 * larger that number of pyramid layers
 	 */
-	public ImageFloat32 getLayer(int layer){
+	public DenseMatrix64F getLayer(int layer){
 		if(layer<layers.size() && layer>=0){
 			return layers.get(layer);
 		} else{
