@@ -64,8 +64,8 @@ public class MatrixScaling {
 	}
 	/**
 	 * Function constructs interpolation kernel
-	 * @param scale
-	 * @return
+	 * @param scale scale parameter
+	 * @return scaled version of original matrix
 	 */
 	public static DenseMatrix64F generateBicubKernel(int scale){
 		DenseMatrix64F kernel = new DenseMatrix64F(3*scale+1,1); //size of the kernel depends on scaling factor
