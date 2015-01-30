@@ -40,7 +40,7 @@ public class FilteringOperations {
 						   (pixelColIndex>=inputImage.numCols)){
 							sample=0;
 						} else{
-							sample = inputImage.get(pixelRowIndex, pixelColIndex);
+							sample = inputImage.unsafe_get(pixelRowIndex, pixelColIndex);
 						}
 						kernelval=kernel.get(kernel.numRows-1-ki, kernel.numCols-1-kj);
 						if(kernelval!=0){
@@ -48,7 +48,7 @@ public class FilteringOperations {
 						}
 					}
 				}
-				output.set(i, j, samplesum);
+				output.unsafe_set(i, j, samplesum);
 			}
 		}
 		return output;
