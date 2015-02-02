@@ -35,6 +35,53 @@ public class MatrixScaling {
 		}
 		return upscaled;
 	}
+	/**
+	 * Function creates larger matrix by specified scale factor column wise. 
+	 * New values are filled with zeros
+	 * @param matrix DenseMatrix64F input matrix
+	 * @param scale integer scale factor
+	 * @return DenseMatrix64F up-sampled matrix
+	 */
+	public static DenseMatrix64F upsampleRows(DenseMatrix64F matrix, int scale){
+		if(scale<=0){
+			return null;
+		}
+		DenseMatrix64F upscaled = new DenseMatrix64F(matrix.numRows, matrix.numCols*scale);
+		for(int i=0; i<upscaled.numRows; i++){
+			for(int j=0; j<upscaled.numCols; j++){
+				if(j%scale==0){
+					upscaled.unsafe_set(i, j, matrix.unsafe_get(i, j/scale));
+				} else{
+					upscaled.unsafe_set(i, j, 0);
+				}
+			}
+		}
+		return upscaled;
+	}
+	
+	/**
+	 * Function creates larger matrix by specified scale factor row wise. 
+	 * New values are filled with zeros
+	 * @param matrix DenseMatrix64F input matrix
+	 * @param scale integer scale factor
+	 * @return DenseMatrix64F up-sampled matrix
+	 */
+	public static DenseMatrix64F upsampleCols(DenseMatrix64F matrix, int scale){
+		if(scale<=0){
+			return null;
+		}
+		DenseMatrix64F upscaled = new DenseMatrix64F(matrix.numRows*scale, matrix.numCols);
+		for(int i=0; i<upscaled.numRows; i++){
+			for(int j=0; j<upscaled.numCols; j++){
+				if(i%scale==0){
+					upscaled.unsafe_set(i, j, matrix.unsafe_get(i/scale, j));
+				} else{
+					upscaled.unsafe_set(i, j, 0);
+				}
+			}
+		}
+		return upscaled;
+	}
 	
 	/**
 	 * Function for bicubic convolution kernel value generation
@@ -71,12 +118,19 @@ public class MatrixScaling {
 		DenseMatrix64F kernel = new DenseMatrix64F(3*scale+1,1); //size of the kernel depends on scaling factor
 		double scalefactor=0;
 		int lowLim=-(kernel.getNumElements()-1)/2;
-		int highLim=(kernel.getNumElements())/2;
+		int highLim=(kernel.getNumElements()-1)/2;
 		for(int i=lowLim; i<=highLim;i++){
 			scalefactor=1.0/scale;
 			kernel.set(i-lowLim, biCubic(i*scalefactor,-0.5));
 		}
 		return kernel;
 	}
+	
+//	/** Function for image resizing. Currently performs Bicubic Convolution interpolation, and
+//	 * Proides only integer scale parameters greater that one
+//	 */
+//	public static DenseMatrix64F imResize(DenseMatrix64F matrix, int scaleFactor){
+//		new DenseMatrix64F rowInterp = 
+//	}
 
 }
