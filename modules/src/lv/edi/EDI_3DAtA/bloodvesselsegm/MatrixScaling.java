@@ -1,6 +1,7 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 /**
  * 
@@ -115,7 +116,8 @@ public class MatrixScaling {
 	 * @return scaled version of original matrix
 	 */
 	public static DenseMatrix64F generateBicubKernel(int scale){
-		DenseMatrix64F kernel = new DenseMatrix64F(3*scale+1,1); //size of the kernel depends on scaling factor
+		DenseMatrix64F kernel = new DenseMatrix64F(4*scale-1,1); //size of the kernel depends on scaling factor
+																 // always odd number
 		double scalefactor=0;
 		int lowLim=-(kernel.getNumElements()-1)/2;
 		int highLim=(kernel.getNumElements()-1)/2;
@@ -126,11 +128,20 @@ public class MatrixScaling {
 		return kernel;
 	}
 	
-//	/** Function for image resizing. Currently performs Bicubic Convolution interpolation, and
-//	 * Proides only integer scale parameters greater that one
-//	 */
-//	public static DenseMatrix64F imResize(DenseMatrix64F matrix, int scaleFactor){
-//		new DenseMatrix64F rowInterp = 
-//	}
-
+	/** Function for image resizing. Currently performs Bicubic Convolution interpolation, and
+	 * Proides only integer scale parameters greater that one
+	 */
+	public static DenseMatrix64F imResize(DenseMatrix64F matrix, int scaleFactor){
+		DenseMatrix64F rowInterp = upsampleRows(matrix,scaleFactor);
+		DenseMatrix64F kernel = generateBicubKernel(scaleFactor);
+		// convolving rows
+		for(int i=0; i<rowInterp.numRows; i++){
+			CommonOps.insert(FilteringOperations.convolve1D(CommonOps.extract(rowInterp, i,i+1, 0, rowInterp.numCols), kernel), rowInterp, i, 0);
+		}
+		DenseMatrix64F colInterp = upsampleCols(rowInterp, scaleFactor);
+		for(int i=0; i<colInterp.numCols; i++){
+			CommonOps.insert(FilteringOperations.convolve1D(CommonOps.extract(colInterp, 0,colInterp.numRows, i, i+1), kernel), colInterp, 0, i);
+		}
+		return colInterp;
+	}
 }
