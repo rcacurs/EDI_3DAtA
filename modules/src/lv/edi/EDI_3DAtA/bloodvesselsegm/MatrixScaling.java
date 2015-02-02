@@ -70,8 +70,8 @@ public class MatrixScaling {
 	public static DenseMatrix64F generateBicubKernel(int scale){
 		DenseMatrix64F kernel = new DenseMatrix64F(3*scale+1,1); //size of the kernel depends on scaling factor
 		double scalefactor=0;
-		int lowLim=-kernel.getNumElements()/2;
-		int highLim=(kernel.getNumElements()-1)/2;
+		int lowLim=-(kernel.getNumElements()-1)/2;
+		int highLim=(kernel.getNumElements())/2;
 		for(int i=lowLim; i<=highLim;i++){
 			scalefactor=1.0/scale;
 			kernel.set(i-lowLim, biCubic(i*scalefactor,-0.5));
