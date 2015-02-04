@@ -37,7 +37,7 @@ public class MatrixScaling {
 		return upscaled;
 	}
 	/**
-	 * Function creates larger matrix by specified scale factor column wise. 
+	 * Function creates larger matrix by specified scale factor row wise. 
 	 * New values are filled with zeros
 	 * @param matrix DenseMatrix64F input matrix
 	 * @param scale integer scale factor
@@ -62,6 +62,72 @@ public class MatrixScaling {
 	
 	/**
 	 * Function creates larger matrix by specified scale factor row wise. 
+	 * Allows specifying phase for which to offset data
+	 * New values are filled with zeros
+	 * @param matrix DenseMatrix64F input matrix
+	 * @param scale integer scale factor
+	 * @param offset integer specifying offset by which original data is offset
+	 * must be in range (0 scale-1) otherwise null is returned
+	 * @return DenseMatrix64F up-sampled matrix
+	 */
+	public static DenseMatrix64F upsampleRows(DenseMatrix64F matrix, int scale, int offset){
+		if((scale<=0) ||(offset<0) ||(offset>=scale)){
+			return null;
+		}
+		DenseMatrix64F upscaled = new DenseMatrix64F(matrix.numRows, matrix.numCols*scale);
+
+		for(int i=0; i<upscaled.numRows; i++){
+			for(int z=0; z<offset; z++){ 	// fill offset values
+				upscaled.unsafe_set(i, z,0);
+			}
+			for(int j=0; j<upscaled.numCols; j++){
+				if(j%scale==0){
+					upscaled.unsafe_set(i, j+offset, matrix.unsafe_get(i, j/scale));
+				} else{
+					if(j+offset<upscaled.numCols){
+					upscaled.unsafe_set(i, j+offset, 0);
+					}
+				}
+			}
+		}
+		return upscaled;
+	}
+	
+	/**
+	 * Function creates larger matrix by specified scale factor column wise.
+	 * Allows specifying phase by which to offset data 
+	 * New values are filled with zeros
+	 * @param matrix DenseMatrix64F input matrix
+	 * @param scale integer scale factor
+	 * @param offset integer specifying offset by which original data if offset
+	 * must be in range (0, scale -1) otherwise null is returned
+	 * @return DenseMatrix64F up-sampled matrix
+	 */
+	public static DenseMatrix64F upsampleCols(DenseMatrix64F matrix, int scale, int offset){
+		if((scale<=0) ||(offset<0) ||(offset>=scale)){
+			return null;
+		}
+		DenseMatrix64F upscaled = new DenseMatrix64F(matrix.numRows*scale, matrix.numCols);
+		for(int i=0; i<upscaled.numRows; i++){
+			for(int z=0; z<offset; z++){	// first set offset value with zeros
+				for(int k=0; k<upscaled.numCols; k++){
+					upscaled.unsafe_set(z, k, 0);
+				}
+			}
+			for(int j=0; j<upscaled.numCols; j++){
+				if(i%scale==0){
+					upscaled.unsafe_set(i+offset, j, matrix.unsafe_get(i/scale, j));
+				} else{
+					if((i+offset)<upscaled.numRows){
+						upscaled.unsafe_set(i+offset, j, 0);
+					}
+				}
+			}
+		}
+		return upscaled;
+	}
+	/**
+	 * Function creates larger matrix by specified scale factor column wise. 
 	 * New values are filled with zeros
 	 * @param matrix DenseMatrix64F input matrix
 	 * @param scale integer scale factor
