@@ -198,13 +198,13 @@ public class MatrixScaling {
 	 * Proides only integer scale parameters greater that one
 	 */
 	public static DenseMatrix64F imResize(DenseMatrix64F matrix, int scaleFactor){
-		DenseMatrix64F rowInterp = upsampleRows(matrix,scaleFactor);
+		DenseMatrix64F rowInterp = upsampleRows(matrix,scaleFactor, scaleFactor/2);
 		DenseMatrix64F kernel = generateBicubKernel(scaleFactor);
 		// convolving rows
 		for(int i=0; i<rowInterp.numRows; i++){
 			CommonOps.insert(FilteringOperations.convolve1D(CommonOps.extract(rowInterp, i,i+1, 0, rowInterp.numCols), kernel), rowInterp, i, 0);
 		}
-		DenseMatrix64F colInterp = upsampleCols(rowInterp, scaleFactor);
+		DenseMatrix64F colInterp = upsampleCols(rowInterp, scaleFactor, scaleFactor/2);
 		for(int i=0; i<colInterp.numCols; i++){
 			CommonOps.insert(FilteringOperations.convolve1D(CommonOps.extract(colInterp, 0,colInterp.numRows, i, i+1), kernel), colInterp, 0, i);
 		}
