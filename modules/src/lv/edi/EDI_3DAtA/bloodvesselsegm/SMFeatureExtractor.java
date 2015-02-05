@@ -1,12 +1,12 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
+import javax.swing.JFrame;
 
-import lv.edi.EDI_3DAtA.common.VolumetricData;
+import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
+import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
+
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 ///**
 // * 
@@ -18,83 +18,78 @@ import lv.edi.EDI_3DAtA.common.VolumetricData;
 // *
 // */
 public class SMFeatureExtractor {
-//	private ArrayList<ImageFloat32> filterBank;
-//	private VolumetricData volData;
-//
-//	/**
-//	 * Constructor constructing feature extractor. 
-//	 * @param filterBankFileName file name for filterbanks.csv file. It is CSV
-//	 * file where each filter values are stored in separate lines,
-//	 * and values are stored in row-major order.
-//	 * @param kernelRows filter bank kernel row size
-//	 * @param kernelCols filter bank kernel column size
-//	 * @throws IOException throws exception if specified filename cannot be read
-//	 */
-//	public SMFeatureExtractor(VolumetricData volData, String filterBankFileName, int kernelRows, int kernelCols) throws IOException{
-//		setFilterBank(filterBankFileName, kernelRows, kernelCols);
-//		setVolData(volData);
-//	}
-//	
-//	/**
-//	 * Function return filter bank set in current Feature Extractor
-//	 * @return the filterBank. Return null if filter bank not specified.
-//	 */
-//	public ArrayList<ImageFloat32> getFilterBank() {
-//		return filterBank;
-//	}
-//
-//	/**
-//	 * Function for setting feature extractor filter-bank from .csv file containing
-//	 * filter kernel values.
-//	 * @param filterBankFileName path to the file. One row of file represents one filter values
-//	 * Values for each kernel must be specified in Col-Maj order.
-//	 * @param kernelRows number of filter kernel rows
-//	 * @param kernelCols number of filter kernel columns
-//	 */
-//	public void setFilterBank(String filterBankFileName, int kernelRows, int kernelCols)
-//	throws IOException{
-//		
-//		File filterBankFile = new File(filterBankFileName);
-//		filterBank = new ArrayList<ImageFloat32>();
-//		BufferedReader br = new BufferedReader(new FileReader(filterBankFile));
-//		
-//		String line;
-//		String[] lineElements;
-//		while((line=br.readLine())!=null){
-//			ImageFloat32 filter = new ImageFloat32(kernelCols, kernelRows);
-//			lineElements = line.split(",");
-//			if(lineElements.length==(kernelRows*kernelCols)){
-//				for(int i=0; i<kernelCols; i++){
-//					for(int j=0 ;j<kernelRows; j++){
-//						filter.set(i, j, Float.parseFloat(lineElements[kernelRows*i+j]));
-//					}
-//				}
-//				filterBank.add(filter);
-//			} else{
-//				br.close();
-//				throw new IOException("Specified format for kernel rows doesnt correpsond to contents of .csv file");
-//			}
-//		}
-//		try{
-//			br.close();
-//		} catch(IOException ex){
-//			
-//		}
-//	}
-//	
-//	/**
-//	 * Function for accessing VolumetricData object for which FeatureExtractor currently is set.
-//	 * @return 
-//	 */
-//	public VolumetricData getVolData() {
-//		return volData;
-//	}
-//	
-//	/**
-//	 * Function for setting VolumetricData object on which FeatureExtractor will operate.
-//	 * @param volData data on which feature extractor will operate.
-//	 */
-//	public void setVolData(VolumetricData volData) {
-//		this.volData = volData;
-//	}
+	private DenseMatrix64F codes;
+	private DenseMatrix64F means;
+	private int patchSize;
+	private int numScales;
+	
+	/**
+	 * Feature extractor constructor
+	 * @param codesFileName - file name to .csv file containing codes (omitting extension)
+	 * @param meansFileName - file name to .csv file containing means (omitting extension)
+	 * @param patchSize - patch size for algorithm
+	 * @param numScales - number of scales
+	 */
+	public SMFeatureExtractor(String codesFileName, String meansFileName, int patchSize, int numScales){
+		setCodes(codesFileName);	
+		CommonOps.transpose(codes);
+		setMeans(meansFileName);
+		this.patchSize = patchSize;
+		this.numScales = numScales;
+	}
+
+	/**
+	 * Function for setting feature extractor codes
+	 * @param fileName path to the .csv file containing codes(not including file extension).
+	 */
+	public void setCodes(String fileName){
+		codes = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
+	}
+	
+	/**
+	 * Function for setting feature extractor means
+	 * @param fileName path to the .csv file containing codes(not including file extension)
+	 */
+	public void setMeans(String fileName){
+		means = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
+	}
+	
+	/**
+	 *  Sets number of scales used in algorithm
+	 * @param numScales number of scales for feature extractor
+	 */
+	public void setScales(int numScales){
+		this.numScales = numScales;
+	}
+	
+	//TODO 	//UPDATE WITH RETURN OF LayerFeatures object
+	/**
+	 * Extracts Layer features
+	 * @param layer layer image in Densematrix64F format for which to extract features
+	 * 
+	 */
+	public void extractLayerFeatures(DenseMatrix64F layer){
+		
+		GaussianPyramid gPyramid = new GaussianPyramid(layer, numScales, 5, 1);
+		DenseMatrix64F multiFilteredLayer;
+		DenseMatrix64F filteredImage;
+		DenseMatrix64F upscaledImage;
+		for(int i=0; i<gPyramid.size(); i++){ // for each scale
+			multiFilteredLayer = SMFilterBlock.filter(gPyramid.getLayer(i), patchSize, codes, means);
+			for(int j=0; j<multiFilteredLayer.getNumCols(); j++){ // for each filter
+				filteredImage=CommonOps.extract(multiFilteredLayer, 0, multiFilteredLayer.numRows, j, j+1);
+				filteredImage.reshape(gPyramid.getLayer(i).numCols, gPyramid.getLayer(i).numRows);
+				CommonOps.transpose(filteredImage); // because of the row major ordering
+				if(i>0){
+					upscaledImage = MatrixScaling.imResize(filteredImage, (int)Math.pow(2, i));
+				} else{
+					upscaledImage = filteredImage;
+
+				}
+				//TODO: fill features object
+			}
+		}
+		
+	}
+
 }
