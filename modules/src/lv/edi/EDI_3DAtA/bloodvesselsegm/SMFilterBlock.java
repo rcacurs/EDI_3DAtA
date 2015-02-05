@@ -1,6 +1,5 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
-import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
@@ -17,11 +16,8 @@ public class SMFilterBlock {
 	 * @param dMeanFileName - file name of the filter bank mean values
 	 * @return - filtering result
 	 */
-	public static DenseMatrix64F filter ( DenseMatrix64F inputImage, int patchSize, String dCodesFileName, String dMeanFileName )
+	public static DenseMatrix64F filter ( DenseMatrix64F inputImage, int patchSize, DenseMatrix64F codes, DenseMatrix64F mean )
 	{
-		
-		DenseMatrix64F codes = DenseMatrixConversions.loadCSVtoDenseMatrix(dCodesFileName); // load the dictionary / filters
-		DenseMatrix64F mean = DenseMatrixConversions.loadCSVtoDenseMatrix(dMeanFileName); // load the mean of the features
 		
 		inputImage = SMFilterBlock.padArray( inputImage, (int) patchSize/2 ); // pad original image with zeros
 		
