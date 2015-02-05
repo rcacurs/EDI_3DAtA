@@ -34,11 +34,10 @@ public class SMFilterBlock {
 		varVec = null;
 		
 		allPatches = SMFilterBlock.bsxfunMinus(allPatches, mean);
-		
-		CommonOps.transpose(codes);
+
 		
 		DenseMatrix64F multResult = new DenseMatrix64F( allPatches.numRows, codes.numCols );
-		
+
 		CommonOps.mult( allPatches, codes, multResult );
 		
 		return multResult;
