@@ -1,5 +1,7 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
+import org.ejml.data.DenseMatrix64F;
+
 /**
  * Feature vectors and parameters of a layer/image
  * @author Olegs
@@ -135,6 +137,23 @@ public class LayerSMFeatures {
 	public float[][] getFeatures()
 	{
 		return features;
+	}
+	
+	/**
+	 * Returns specific feachure image ad DenseMatrix64F
+	 * @param featureIndex feature index to return 
+	 * @return DenseMatrix64F specified feature in DenseMatrix64F format
+	 */
+	public DenseMatrix64F getFeature(int featureIndex){
+		DenseMatrix64F feature = new DenseMatrix64F(numRows, numCols);
+		int pixelIndex=0;
+		for(int i=0; i<numCols; i++){
+			for(int j=0; j<numRows; j++){
+				feature.unsafe_set(j, i, features[pixelIndex][featureIndex]);
+				pixelIndex++;
+			}
+		}
+		return feature;
 	}
 	
 }
