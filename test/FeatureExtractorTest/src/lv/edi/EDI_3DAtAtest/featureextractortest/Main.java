@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import lv.edi.EDI_3DAtA.bloodvesselsegm.LayerSMFeatures;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
@@ -13,7 +15,10 @@ public class Main {
 	static MetaImage metaImage;
 	static DenseMatrix64F layerImage;
 	static int selectedLayerIndex;
+	static SMFeatureExtractor featureExtractor;
+	static LayerSMFeatures layerFeatures;
 	static JFrame inputImageFrame = new JFrame("Input Image Frame");
+	static long time1, time2;
 	public static void main(String[] args) {
 		
 		if(args.length<2){
@@ -32,14 +37,25 @@ public class Main {
 		}
 		// READ LAYER DATA FROM IMAGE
 		try {
+			
 			selectedLayerIndex = Integer.parseInt(args[1]);
 		} catch (NumberFormatException e) {
 			System.out.println("Problem parcing specified layer. Specified layer must be specified as number!");
 			return;
 		}
+		time1 = System.currentTimeMillis();
 		layerImage = metaImage.getLayerImage(selectedLayerIndex);
+		time2 = System.currentTimeMillis();
+		System.out.println("Layer read time: "+(time2-time1)+" [ms]");
 		// SHOW LAYER
 		ImageVisualization.imshow(layerImage, inputImageFrame);
+		// EXTRACT FEATURES
+		featureExtractor = new SMFeatureExtractor("../../modules/res/dCodes", "../../modules/res/dMean", 5, 6);
+		time1 = System.currentTimeMillis();
+		layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+		time2 = System.currentTimeMillis();
+		System.out.println("Feature extraction time: "+(time2-time1)+" [ms]");
+		
 	}
 
 }

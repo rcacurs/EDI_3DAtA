@@ -1,9 +1,8 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
-import javax.swing.JFrame;
+import java.net.URL;
 
 import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
-import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
@@ -37,6 +36,25 @@ public class SMFeatureExtractor {
 		this.patchSize = patchSize;
 		this.numScales = numScales;
 	}
+	
+	/** Default constructor for SMFeatureExtractor (CUrrentlu not working :))
+	 * it sets default dMeans.csv and dCodes.csv /res file path, relative from class path
+	 * set patch size 5, and number of scales 6
+	 */
+	public SMFeatureExtractor(){
+		URL urlCodes = SMFeatureExtractor.class.getResource("/../../../../../res/dCodes.csv");
+		URL urlMeans = SMFeatureExtractor.class.getResource("/../../../../../res/dMean.csv");
+		System.out.println(urlCodes);
+		System.out.println(urlMeans);
+		String strCodes = urlCodes.getPath();
+		String strMeans = urlMeans.getPath();
+		System.out.println(strCodes);
+		System.out.println(strMeans);
+		setCodes(strCodes.substring(0, strCodes.length()-4));
+		setMeans(strMeans.substring(0, strCodes.length()-4));
+		this.patchSize=5;
+		this.numScales=6;
+	}
 
 	/**
 	 * Function for setting feature extractor codes
@@ -66,20 +84,24 @@ public class SMFeatureExtractor {
 	/**
 	 * Extracts Layer features
 	 * @param layer layer image in Densematrix64F format for which to extract features
+	 * @return LayerSMFeatures features of image
 	 * 
 	 */
-	public void extractLayerFeatures(DenseMatrix64F layer){
-		
+	public LayerSMFeatures extractLayerFeatures(DenseMatrix64F layer){
+		LayerSMFeatures features = new LayerSMFeatures(layer.numRows, layer.numCols, numScales*codes.numCols);
 		GaussianPyramid gPyramid = new GaussianPyramid(layer, numScales, 5, 1);
 		DenseMatrix64F multiFilteredLayer;
 		DenseMatrix64F filteredImage;
 		DenseMatrix64F upscaledImage;
+		int featureIndex=0;
 		for(int i=0; i<gPyramid.size(); i++){ // for each scale
 			multiFilteredLayer = SMFilterBlock.filter(gPyramid.getLayer(i), patchSize, codes, means);
 			for(int j=0; j<multiFilteredLayer.getNumCols(); j++){ // for each filter
+
 				filteredImage=CommonOps.extract(multiFilteredLayer, 0, multiFilteredLayer.numRows, j, j+1);
 				filteredImage.reshape(gPyramid.getLayer(i).numCols, gPyramid.getLayer(i).numRows);
 				CommonOps.transpose(filteredImage); // because of the row major ordering
+
 				if(i>0){
 					upscaledImage = MatrixScaling.imResize(filteredImage, (int)Math.pow(2, i));
 				} else{
@@ -87,8 +109,19 @@ public class SMFeatureExtractor {
 
 				}
 				//TODO: fill features object
+				int imageIndex=0;
+				for(int c=0; c<upscaledImage.numCols; c++){
+					for(int r=0; r<upscaledImage.numRows; r++){
+						//System.out.println("Image index: "+imageIndex);
+//						System.out.println("Feature index: "+featureIndex);
+						features.setFeatureFast(imageIndex, featureIndex, upscaledImage.unsafe_get(r, c));
+						imageIndex++;
+					}
+				}
+				featureIndex++;
 			}
 		}
+		return features;
 		
 	}
 
