@@ -109,15 +109,7 @@ public class SMFeatureExtractor {
 
 				}
 				//TODO: fill features object
-				int imageIndex=0;
-				for(int c=0; c<upscaledImage.numCols; c++){
-					for(int r=0; r<upscaledImage.numRows; r++){
-						//System.out.println("Image index: "+imageIndex);
-//						System.out.println("Feature index: "+featureIndex);
-						features.setFeatureFast(imageIndex, featureIndex, upscaledImage.unsafe_get(r, c));
-						imageIndex++;
-					}
-				}
+				features.setFeature(featureIndex, upscaledImage.data);
 				featureIndex++;
 			}
 		}
