@@ -332,8 +332,8 @@ public class CubeMC {
 			{7,4},  //e7
 			{0,4},  //e8
 			{1,5},  //e9
-			{3,7},  //e10
-			{2,6},  //e11
+			{2,6},  //e10
+			{3,7},  //e11
 	};
 	/** default cube constructor
 	 *  just initialize cube vertex local coordinates
@@ -404,7 +404,7 @@ public class CubeMC {
 				vertexList.add(interpolateEdge(vertexLocalCoordinates.get(edgeConnectionIndexes[edgeIndex][0]),
 						                       vertexLocalCoordinates.get(edgeConnectionIndexes[edgeIndex][1]),
 						                       vertexDensities[edgeConnectionIndexes[edgeIndex][0]],
-						                       edgeConnectionIndexes[edgeIndex][1],
+						                       vertexDensities[edgeConnectionIndexes[edgeIndex][1]],
 						                       isovalue));
 			}
 		}
