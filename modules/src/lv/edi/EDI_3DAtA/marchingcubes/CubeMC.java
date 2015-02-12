@@ -11,10 +11,10 @@ import org.ejml.ops.CommonOps;
  *  
  *         v7____e6_______ v6
  *        /|             /|
- *    e10/ e7        e11/ |e5
+ *    e11/ e7        e10/ |e5
  * 	    /__|___e2______/  |
- * 	 v3 |  |_________v2|__| 
- *    e3|  /v4   e4    |  /v5
+ * 	 v4 |  |_________v5|__| 
+ *    e3|  /v3   e4    |  /v2
  *      | e8         e1| e9
  *      |/_____________|/
  *      v0     e0      v1
@@ -30,10 +30,8 @@ import org.ejml.ops.CommonOps;
  *      
  */
 public class CubeMC {
-	private double isovalue;
 	private double[] vertexDensities;
 	private ArrayList<DenseMatrix64F> vertexLocalCoordinates;
-	int caseIndex = 0;
 	
 	private ArrayList<DenseMatrix64F> edgeIntersections;
 	private ArrayList<Integer> edgeFaceIndexes;
@@ -350,34 +348,34 @@ public class CubeMC {
 	 */
 	public CubeMC(){
 		vertexLocalCoordinates = new ArrayList<DenseMatrix64F>(8);
-		vertexLocalCoordinates.add(0, new DenseMatrix64F(3, 1, true, 0, 1, 1));
-		vertexLocalCoordinates.add(1, new DenseMatrix64F(3, 1, true, 1, 1, 1));
+		vertexLocalCoordinates.add(0, new DenseMatrix64F(3, 1, true, 0, 0, 0));
+		vertexLocalCoordinates.add(1, new DenseMatrix64F(3, 1, true, 1, 0, 0));
 		vertexLocalCoordinates.add(2, new DenseMatrix64F(3, 1, true, 1, 1, 0));
 		vertexLocalCoordinates.add(3, new DenseMatrix64F(3, 1, true, 0, 1, 0));
 		vertexLocalCoordinates.add(4, new DenseMatrix64F(3, 1, true, 0, 0, 1));
 		vertexLocalCoordinates.add(5, new DenseMatrix64F(3, 1, true, 1, 0, 1));
-		vertexLocalCoordinates.add(6, new DenseMatrix64F(3, 1, true, 1, 0, 0));
-		vertexLocalCoordinates.add(7, new DenseMatrix64F(3, 1, true, 0, 0, 0));
+		vertexLocalCoordinates.add(6, new DenseMatrix64F(3, 1, true, 1, 1, 1));
+		vertexLocalCoordinates.add(7, new DenseMatrix64F(3, 1, true, 0, 1, 1));
 	}
 	/**
 	 * Constructor for CubeMC object
 	 * @param cubeDensities - densities for each vertex of cube
 	 */
-	public CubeMC(double[] cubeDensities, double isovalue){
+	public CubeMC(double[] cubeDensities){
 		this();
 		if(cubeDensities.length==8){
 			vertexDensities=cubeDensities;
-			this.isovalue = isovalue;
-			caseIndex=caseIndex();
 		}
 	}
+	
 	
 	/**
 	 * returns index for particular case of cube depending on vertex
 	 * intensity values and isovalue
 	 * @return int - index for particular case (used to get case specific cube surface triangle configurations)
 	 */
-	public int caseIndex(){
+	
+	public int caseIndex(double isovalue){
 		int caseIndex=0;
 		for(int i=0; i<8; i++){
 			if(vertexDensities[i]>isovalue){
@@ -385,6 +383,16 @@ public class CubeMC {
 			}
 		}
 		return caseIndex;
+	}
+	
+	/**
+	 * Sets vertex densities for cube
+	 * @param densities array of length 8 containing densities on cube vertices.
+	 */
+	public void setVertexDensities(double[] densities){
+		if(densities.length==8){
+			this.vertexDensities = densities;
+		}
 	}
 	
 	/**
@@ -405,11 +413,11 @@ public class CubeMC {
 		return interpolatedEdge;
 	}
 	
-	public ArrayList<DenseMatrix64F>getVertexList(){
+	public ArrayList<DenseMatrix64F>getVertexList(double isovalue){
 		ArrayList<DenseMatrix64F> vertexList = new ArrayList<DenseMatrix64F>();
 		
 		for(int i=0; i<16; i++){
-			int edgeIndex=triangleTable[caseIndex][i];
+			int edgeIndex=triangleTable[caseIndex(isovalue)][i];
 			if(edgeIndex!=-1){
 				vertexList.add(interpolateEdge(vertexLocalCoordinates.get(edgeConnectionIndexes[edgeIndex][0]),
 						                       vertexLocalCoordinates.get(edgeConnectionIndexes[edgeIndex][1]),

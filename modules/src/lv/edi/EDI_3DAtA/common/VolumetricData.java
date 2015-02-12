@@ -100,10 +100,10 @@ public class VolumetricData{
 			
 			values[0]=layers.get(k).get(j, i);
 			values[1]=layers.get(k).get(j, i+1);
-			values[2]=layers.get(k+1).get(j, k+1);
-			values[3]=layers.get(k+1).get(j, i);
-			values[4]=layers.get(k).get(j+1, i);
-			values[5]=layers.get(k).get(j+1, i+1);
+			values[2]=layers.get(k).get(j+1, i+1);
+			values[3]=layers.get(k).get(j+1, i);
+			values[4]=layers.get(k+1).get(j, i);
+			values[5]=layers.get(k+1).get(j, i+1);
 			values[6]=layers.get(k+1).get(j+1, i+1);
 			values[7]=layers.get(k+1).get(j+1, i);
 			
