@@ -18,6 +18,16 @@ import org.ejml.ops.CommonOps;
  *      | e8         e1| e9
  *      |/_____________|/
  *      v0     e0      v1
+ *      
+ *      ORIGIN IN V0
+ *         Z
+ *         /\
+ *          |  /|Y
+ *          |  /
+ *          | / 
+ *          |/_____________> X
+ *    
+ *      
  */
 public class CubeMC {
 	private double isovalue;
