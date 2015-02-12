@@ -77,5 +77,39 @@ public class VolumetricData{
 		}
 	}
 	
+	/**
+	 * Returns values of volumetric data at cube vertices with origin at specified coordinates
+	 * Usefull in marching cubes algorithm. 
+	 * @param x - x coordinate index
+	 * @param y - y coodinate index
+	 * @param z - z coordinate index
+	 * @return double[] Values on cube vertices are returned as double[] array of size 8
+	 *  order of values are corresponding:
+	 *  double[] = {Value(i, j, k), Value(i+1, j, k), Value(i+1, j, k+1),
+	 *              Value(i, j, k+1), Value(i, j+1, k), Value(i+1, j+1, k), 
+	 *              Value(i+1, j+1, k+1), Value(i, j+1, k+1)}
+	 */
+	public double[] getValuesAtCubeVertices(int i, int j, int k){
+		double[] values = new double[8];
+		if((i>0)&&
+		   (i<layers.get(0).numCols-1)&&
+		   (j>0)&&
+		   (j<layers.get(0).numRows-1)&&
+		   (k>0)&&
+		   (j<layers.size()-1)){
+			
+			values[0]=layers.get(k).get(j, i);
+			values[1]=layers.get(k).get(j, i+1);
+			values[2]=layers.get(k+1).get(j, k+1);
+			values[3]=layers.get(k+1).get(j, i);
+			values[4]=layers.get(k).get(j+1, i);
+			values[5]=layers.get(k).get(j+1, i+1);
+			values[6]=layers.get(k+1).get(j+1, i+1);
+			values[7]=layers.get(k+1).get(j+1, i);
+			
+		}
+		return values;
+	}
+	
 	
 }
