@@ -23,7 +23,7 @@ public class Main extends Application {
 			AppController controller = loader.getController();
 			controller.setMainStage(primaryStage);
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
@@ -7,16 +8,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lv.edi.EDI_3DAtA.vessel2objapp.AppController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lv.edi.EDI_3DAtA.vessel2objapp.AppController">
    <children>
-      <VBox fillWidth="false" prefHeight="800.0" prefWidth="1000.0">
+      <VBox prefHeight="800.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <MenuBar prefHeight="0.0" prefWidth="1000.0">
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem fx:id="menuItemOpenCTFile" mnemonicParsing="false" onAction="#selectCTScanFile" text="Open CT Scan File..." />
-                    <MenuItem mnemonicParsing="false" text="Close" />
+                    <MenuItem mnemonicParsing="false" text="Cancel" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -26,7 +27,21 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <ImageView fx:id="ctScanImageView" fitHeight="680.0" fitWidth="1000.0" pickOnBounds="true" preserveRatio="true" />
+            <HBox>
+               <children>
+                  <ImageView fx:id="ctScanImageView" pickOnBounds="true" preserveRatio="true" />
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                              <TextField />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>

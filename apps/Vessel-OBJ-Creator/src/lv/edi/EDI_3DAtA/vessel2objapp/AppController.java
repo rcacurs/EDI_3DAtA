@@ -1,6 +1,5 @@
 package lv.edi.EDI_3DAtA.vessel2objapp;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +13,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -29,7 +30,6 @@ public class AppController implements Initializable{
     private ImageView ctScanImageView;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 	}
 	public void setMainStage(Stage stage){
 		this.mainStage = stage;
@@ -52,7 +52,6 @@ public class AppController implements Initializable{
 		}
 		try {
 			Main.selectedTomographyScan= new MetaImage(scanFile);
-			System.out.println(Main.selectedTomographyScan.toString());
 			Main.currentLayerImage=Main.selectedTomographyScan.getLayerImage(Main.selectedLayer);
 			BufferedImage bImage = ImageVisualization.convDenseMatrixToBufImage(Main.currentLayerImage);
 			WritableImage image = new WritableImage(bImage.getWidth(), bImage.getHeight());
