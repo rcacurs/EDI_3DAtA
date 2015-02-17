@@ -40,10 +40,9 @@ public class MetaImage {
 	 * Constructs MetaImage object.
 	 * 
 	 * @param metaHeaderFile String that specifies path to the meta image header file (Can relative path or absolute path)
-	 * @throws FileNotFoundException if file specified in constructor argument doesn't exist.
 	 * @throws IOException if exception occurs while reading specified file.
 	 */
-	public MetaImage(String metaHeaderFile) throws FileNotFoundException, IOException{
+	public MetaImage(String metaHeaderFile) throws IOException{
 		elementHeaderFile = new File(metaHeaderFile);
 		
 		BufferedReader br = new BufferedReader(new FileReader(elementHeaderFile));
@@ -119,6 +118,15 @@ public class MetaImage {
 		}
 		br.close();
 		
+	}
+	
+	/**
+	 * Meta image file constructor taking File object as parameter
+	 * @param metaImageHeaderFile File object representing meta image file on system
+	 * @throws IOException is thrown if problem with opening specified file
+	 */
+	public MetaImage(File metaImageHeaderFile) throws IOException{
+		this(metaImageHeaderFile.toString());
 	}
 	/**
 	 * Method for setting meta image objectType property from string.
