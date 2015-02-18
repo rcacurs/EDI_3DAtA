@@ -10,11 +10,12 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -28,6 +29,13 @@ public class AppController implements Initializable{
 	private MenuItem menuItemOpenCTFile;
 	@FXML
     private ImageView ctScanImageView;
+	@FXML
+	private TextField textFieldSelectedLayerIdx;
+	@FXML
+	private Button btnNavigateLayersUp;
+	@FXML
+	private Button btnNavigateLayersDown;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}
@@ -35,8 +43,31 @@ public class AppController implements Initializable{
 		this.mainStage = stage;
 	};
 	
-	
-	
+	@FXML 
+	void onTextFieldSelectedLayer(ActionEvent event){
+		int index;
+		try {
+			index=Integer.parseInt(textFieldSelectedLayerIdx.getText());
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			index=0;
+		}
+		updateSelectedLayerIndex(index);
+		updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+		
+	}
+	@FXML 
+	public void onBtnNavigateLayerUp(){
+		int index = Integer.parseInt(textFieldSelectedLayerIdx.getText());
+		updateSelectedLayerIndex(index+1);
+		updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+	}
+	@FXML
+	public void onBtnNavigateLayerDown(){
+		int index = Integer.parseInt(textFieldSelectedLayerIdx.getText());
+		updateSelectedLayerIndex(index-1);
+		updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+	}
 	@FXML
 	public void selectCTScanFile(ActionEvent event){
 		System.out.println("Clicked");
@@ -52,15 +83,49 @@ public class AppController implements Initializable{
 		}
 		try {
 			Main.selectedTomographyScan= new MetaImage(scanFile);
-			Main.currentLayerImage=Main.selectedTomographyScan.getLayerImage(Main.selectedLayer);
-			BufferedImage bImage = ImageVisualization.convDenseMatrixToBufImage(Main.currentLayerImage);
-			WritableImage image = new WritableImage(bImage.getWidth(), bImage.getHeight());
-			SwingFXUtils.toFXImage(bImage, image);
-			ctScanImageView.setImage(image);
+			updateSelectedLayerIndex(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+			updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+			
 		} catch (IOException e) {
 			System.out.println("Problem Loadin Specified File");
 		}
 		
 		((MenuItem)event.getSource()).getParentMenu().hide();
+	}
+	@FXML
+	public void filterLayerSelecteTxtField(KeyEvent arg0){
+		String chara = arg0.getCharacter();
+		if("0123456789".contains(chara)){
+		} else{
+			arg0.consume();
+		}
+	}
+	
+	// HELPER FUNCTIONS
+	
+	// updates selected layer indes in layer navigation panel
+	private void updateSelectedLayerIndex(int newIndex){
+		if(newIndex>=0){
+			if(Main.selectedTomographyScan!=null){
+				if(newIndex>=Main.selectedTomographyScan.getDimSize().get(2)){
+					textFieldSelectedLayerIdx.setText(Integer.toString((int)Main.selectedTomographyScan.getDimSize().get(2)-1));
+				} else{
+					textFieldSelectedLayerIdx.setText(Integer.toString(newIndex));
+				}
+			} else{
+				textFieldSelectedLayerIdx.setText(Integer.toString(newIndex));
+			}
+			
+		};
+	}
+	// updates view with new image if file is opened
+	private void updateSelectefLayerImage(int layerIndex){
+		if(Main.selectedTomographyScan!=null){
+			Main.currentLayerImage=Main.selectedTomographyScan.getLayerImage(layerIndex);
+			BufferedImage bImage = ImageVisualization.convDenseMatrixToBufImage(Main.currentLayerImage);
+			WritableImage image = new WritableImage(bImage.getWidth(), bImage.getHeight());
+			SwingFXUtils.toFXImage(bImage, image);
+			ctScanImageView.setImage(image);
+		}
 	}
 }
