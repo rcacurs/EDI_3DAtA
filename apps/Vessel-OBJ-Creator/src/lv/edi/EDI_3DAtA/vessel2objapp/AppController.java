@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -35,6 +36,20 @@ public class AppController implements Initializable{
 	private Button btnNavigateLayersUp;
 	@FXML
 	private Button btnNavigateLayersDown;
+	@FXML
+	private Label fieldScanFilePath;
+	@FXML
+	private Label labelScanDimX;
+	@FXML
+	private Label labelScanDimY;
+	@FXML
+	private Label labelScanDimZ;
+	@FXML
+	private Label labelScanSpacingX;
+	@FXML
+	private Label labelScanSpacingY;
+	@FXML
+	private Label labelScanSpacingZ;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -70,8 +85,6 @@ public class AppController implements Initializable{
 	}
 	@FXML
 	public void selectCTScanFile(ActionEvent event){
-		System.out.println("Clicked");
-		System.out.println(menuItemOpenCTFile);
 		FileChooser fileChooser = new FileChooser();
 		ExtensionFilter extFilter = new ExtensionFilter("Meta Image files (*.mhd)", "*.mhd");
 		fileChooser.getExtensionFilters().add(extFilter);
@@ -85,6 +98,18 @@ public class AppController implements Initializable{
 			Main.selectedTomographyScan= new MetaImage(scanFile);
 			updateSelectedLayerIndex(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+			
+			// update selected scan file field
+			fieldScanFilePath.setText(scanFile.toString());
+			// update scan dimmensions fields
+			labelScanDimX.setText(""+(int)((Main.selectedTomographyScan.getDimSize().get(0))));
+			labelScanDimY.setText(""+(int)((Main.selectedTomographyScan.getDimSize().get(1))));
+			labelScanDimZ.setText(""+(int)((Main.selectedTomographyScan.getDimSize().get(2))));
+			//update selected scan element spacing
+			labelScanSpacingX.setText(""+Main.selectedTomographyScan.getElementSpacing().get(0));
+			labelScanSpacingY.setText(""+Main.selectedTomographyScan.getElementSpacing().get(1));
+			labelScanSpacingZ.setText(""+Main.selectedTomographyScan.getElementSpacing().get(2));
+			
 			
 		} catch (IOException e) {
 			System.out.println("Problem Loadin Specified File");
