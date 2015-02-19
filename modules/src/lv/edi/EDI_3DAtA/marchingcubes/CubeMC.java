@@ -33,8 +33,6 @@ public class CubeMC {
 	private double[] vertexDensities;
 	private ArrayList<DenseMatrix64F> vertexLocalCoordinates;
 	
-	private ArrayList<DenseMatrix64F> edgeIntersections;
-	private ArrayList<Integer> edgeFaceIndexes;
 	
 	final public int edgeTable[] = {                       // contains edge intersection configuration for particular case
 			0,     265,  515,  778, 1030, 1295, 1541, 1804,

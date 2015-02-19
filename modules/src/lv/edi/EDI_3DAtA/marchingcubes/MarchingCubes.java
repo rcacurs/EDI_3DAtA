@@ -76,5 +76,6 @@ public class MarchingCubes {
 			String indexS = "f " +(i*3+1)+" "+(i*3+2)+" "+(i*3+3);
 			writer.println(indexS);
 		}
+		writer.close();
 	}
 }
