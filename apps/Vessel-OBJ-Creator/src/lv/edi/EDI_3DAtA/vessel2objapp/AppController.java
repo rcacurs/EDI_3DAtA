@@ -99,16 +99,16 @@ public class AppController implements Initializable{
 			updateSelectedLayerIndex(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			
-			// update selected scan file field
+			//update selected scan file field
 			fieldScanFilePath.setText(scanFile.toString());
-			// update scan dimmensions fields
+			//update scan dimmensions fields
 			labelScanDimX.setText(""+(int)((Main.selectedTomographyScan.getDimSize().get(0))));
 			labelScanDimY.setText(""+(int)((Main.selectedTomographyScan.getDimSize().get(1))));
 			labelScanDimZ.setText(""+(int)((Main.selectedTomographyScan.getDimSize().get(2))));
 			//update selected scan element spacing
-			labelScanSpacingX.setText(""+Main.selectedTomographyScan.getElementSpacing().get(0));
-			labelScanSpacingY.setText(""+Main.selectedTomographyScan.getElementSpacing().get(1));
-			labelScanSpacingZ.setText(""+Main.selectedTomographyScan.getElementSpacing().get(2));
+			labelScanSpacingX.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(0)));
+			labelScanSpacingY.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(1)));
+			labelScanSpacingZ.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(2)));
 			
 			
 		} catch (IOException e) {
