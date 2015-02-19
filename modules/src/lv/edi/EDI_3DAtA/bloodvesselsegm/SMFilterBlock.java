@@ -80,6 +80,38 @@ public class SMFilterBlock {
 	
 	
 	/**
+	 * element-wise multiplication of input array rows/columns with elements in the input vector
+	 * @param array - array to be multiplied and updated
+	 * @param vector - vector with coefficients
+	*/
+	public static DenseMatrix64F bsxfunMultiply ( DenseMatrix64F array, DenseMatrix64F vector )
+	{	
+		if ( array.getNumRows() == vector.getNumElements() )
+		{			
+			for ( int col = 0; col < array.numCols; col++ )
+			{
+				for ( int row = 0; row < array.numRows; row++ )
+				{
+					array.set(row, col, array.get(row, col) * vector.get(row) );
+				}
+			}
+		}
+		else
+		{
+			for ( int col = 0; col < array.numCols; col++ )
+			{
+				for ( int row = 0; row < array.numRows; row++ )
+				{
+					array.set(row, col, array.get(row, col) * vector.get(col) );
+				}
+			}
+		}
+		return array;
+		
+	}
+	
+	
+	/**
 	 * element-wise division of input array rows/columns with elements in the input vector
 	 * @param array - array to be divided and updated
 	 * @param vector - vector with denominator values
@@ -98,7 +130,13 @@ public class SMFilterBlock {
 		}
 		else
 		{
-			
+			for ( int col = 0; col < array.numCols; col++ )
+			{
+				for ( int row = 0; row < array.numRows; row++ )
+				{
+					array.set(row, col, array.get(row, col) / vector.data[col] );
+				}
+			}
 		}
 		return array;
 		
