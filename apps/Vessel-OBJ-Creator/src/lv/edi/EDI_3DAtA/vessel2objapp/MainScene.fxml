@@ -56,18 +56,18 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <Separator orientation="VERTICAL" />
+                        <Separator orientation="VERTICAL" prefHeight="777.0" prefWidth="0.0" />
                         <VBox prefHeight="777.0" prefWidth="407.0">
                            <children>
                               <Label alignment="CENTER" prefHeight="49.0" prefWidth="292.0" text="CT Scan Info" textAlignment="CENTER">
                                  <font>
-                                    <Font name="System Bold" size="18.0" />
+                                    <Font name="System Bold" size="16.0" />
                                  </font>
                               </Label>
                               <Separator prefHeight="0.0" />
                               <Label prefHeight="19.0" prefWidth="292.0" text="Scan File:">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font size="14.0" />
                                  </font>
                               </Label>
                               <Label fx:id="fieldScanFilePath" alignment="CENTER_RIGHT" prefHeight="79.0" prefWidth="289.0" textAlignment="RIGHT" wrapText="true">
@@ -77,7 +77,7 @@
                               </Label>
                               <Label prefHeight="25.0" prefWidth="295.0" text="Scan Dimensions:">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font size="14.0" />
                                  </font>
                               </Label>
                               <GridPane alignment="TOP_RIGHT" prefHeight="87.0" prefWidth="292.0">
@@ -126,7 +126,7 @@
                               </GridPane>
                               <Label prefHeight="17.0" prefWidth="305.0" text="Scan Element Spacing:">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font size="14.0" />
                                  </font>
                               </Label>
                               <GridPane alignment="TOP_RIGHT" prefHeight="87.0" prefWidth="292.0">
