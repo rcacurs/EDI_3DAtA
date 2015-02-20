@@ -223,9 +223,10 @@ public class SoftmaxRegrClassifier {
 	{	
 		DenseMatrix64F temp = new DenseMatrix64F( new double[data.numRows][data.numCols+1] ); 
 		CommonOps.insert(data, temp, 0, 0);
-		
 		int col = data.numCols;
-		for ( int row = 0; row < data.numRows; row++ )
+		int numRows = data.numRows;
+		data=null;
+		for ( int row = 0; row < numRows; row++ )
 		{
 			temp.set( row, col, 1 ); // set the entries in the last column to 1
 		}
