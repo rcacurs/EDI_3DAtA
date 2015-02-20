@@ -376,7 +376,7 @@ public class CubeMC {
 	public int caseIndex(double isovalue){
 		int caseIndex=0;
 		for(int i=0; i<8; i++){
-			if(vertexDensities[i]>isovalue){
+			if(vertexDensities[i]>=isovalue){
 				caseIndex+=Math.pow(2, i);
 			}
 		}

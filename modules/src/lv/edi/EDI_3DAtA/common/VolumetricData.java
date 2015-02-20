@@ -91,12 +91,12 @@ public class VolumetricData{
 	 */
 	public double[] getValuesAtCubeVertices(int i, int j, int k){
 		double[] values = new double[8];
-		if((i>0)&&
+		if((i>=0)&&
 		   (i<layers.get(0).numCols-1)&&
-		   (j>0)&&
+		   (j>=0)&&
 		   (j<layers.get(0).numRows-1)&&
-		   (k>0)&&
-		   (j<layers.size()-1)){
+		   (k>=0)&&
+		   (k<layers.size()-1)){
 			
 			values[0]=layers.get(k).get(j, i);
 			values[1]=layers.get(k).get(j, i+1);

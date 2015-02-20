@@ -53,7 +53,7 @@ public class SoftmaxRegrClassifier {
 	 */
 	public void setData (LayerSMFeatures layerFeatures)
 	{
-		this.data = new DenseMatrix64F( layerFeatures.getFeatures() );
+		this.data =  layerFeatures.getFeatures() ;
 		CommonOps.transpose(data);
 	}
 	
@@ -76,13 +76,12 @@ public class SoftmaxRegrClassifier {
 		// DenseMatrixConversions.saveDenseMatrixToCSV( data, "../../modules/res/data" );
 		
 		this.normalize(); // Normalise the data before classification 
-		this.addLastColumnOfOnes(); // add column of ones
 		
-		DenseMatrix64F multResult = new DenseMatrix64F( new double[2][data.numRows] ); // matrix to store the multiplication result
+		DenseMatrix64F multResult = new DenseMatrix64F( new double[data.numRows][2] ); // matrix to store the multiplication result
 		
-		CommonOps.transpose(data); // transpose the data before multiplication
-		
-		CommonOps.mult(model, data, multResult); // multiply model with data
+		// CommonOps.transpose(data); // transpose the data before multiplication
+		CommonOps.mult(data, model, multResult); // multiply model with data
+		CommonOps.transpose(multResult);
 		
 		//DenseMatrix64F maxVec = new DenseMatrix64F( 1, multResult.numCols );
 		DenseMatrix64F maxVec = columnMax(multResult);
