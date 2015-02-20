@@ -88,7 +88,7 @@ public class SMFeatureExtractor {
 	 * 
 	 */
 	public LayerSMFeatures extractLayerFeatures(DenseMatrix64F layer){
-		LayerSMFeatures features = new LayerSMFeatures(layer.numRows, layer.numCols, numScales*codes.numCols);
+		LayerSMFeatures features = new LayerSMFeatures(layer.numRows, layer.numCols, numScales*codes.numCols+1);
 		GaussianPyramid gPyramid = new GaussianPyramid(layer, numScales, 5, 1);
 		DenseMatrix64F multiFilteredLayer;
 		DenseMatrix64F filteredImage;

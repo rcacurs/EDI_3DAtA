@@ -8,7 +8,7 @@ import org.ejml.data.DenseMatrix64F;
  */
 public class LayerSMFeatures {
 	
-	private double[][] features;
+	private DenseMatrix64F features;
 	private int numRows = 0;
 	private int numCols = 0; 
 	private int numFeatures = 0;
@@ -24,7 +24,7 @@ public class LayerSMFeatures {
 		this.numRows = numRows;
 		this.numCols = numCols;
 		this.numFeatures = numFeatures;
-		features = new double[numFeatures][numRows*numCols]; // Initialise an array to store the feature vectors
+		features = new DenseMatrix64F(numFeatures, numRows*numCols); // Initialise an array to store the feature vectors
 	}
 	
 	/**
@@ -32,8 +32,8 @@ public class LayerSMFeatures {
 	 * @param featureIndex
 	 */
 	public void setFeature(int featureIndex, double[] featureImage){
-		if(featureImage.length==features[0].length){
-			features[featureIndex]=featureImage;
+		if(featureImage.length==features.numCols){
+			System.arraycopy(featureImage, 0, features.data, features.numCols*featureIndex, featureImage.length);
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class LayerSMFeatures {
 	 */
 	public void setFeatureFast( int idx, int featureNum, double value )
 	{
-		features[ featureNum ][ idx ] = (float) value;
+		features.set(featureNum, idx, value);
 	}
 	
 	/**
@@ -59,58 +59,58 @@ public class LayerSMFeatures {
 	public void setFeature( int row, int col, int featureNum, double value )
 	{
 		int colIndex = row * numCols + col; // vertical position of current feature vector
-		features[ featureNum ][ colIndex ] = value;
+		features.set(featureNum, colIndex, value);
 	}
 	
-	/**
-	 * returns a single feature with specified serial number for the current index
-	 * NOTE: the requesting program should scan/fill the array in row-major order
-	 * @param idx - index of the pixel in the column-major order
-	 * @param featureNum - serial number of the feature
-	 * @return a feature with specified serial number (float type)
-	 */
-	public double getFeatureFast( int idx, int featureNum )
-	{	
-		double feature = features[featureNum][idx]; // feature vectors are stored as rows
-		return feature;
-	}
+//	/**
+//	 * returns a single feature with specified serial number for the current index
+//	 * NOTE: the requesting program should scan/fill the array in row-major order
+//	 * @param idx - index of the pixel in the column-major order
+//	 * @param featureNum - serial number of the feature
+//	 * @return a feature with specified serial number (float type)
+//	 */
+//	public double getFeatureFast( int idx, int featureNum )
+//	{	
+//		double feature = features[featureNum][idx]; // feature vectors are stored as rows
+//		return feature;
+//	}
 	
-	/**
-	 * returns a single feature with specified serial number for the current location/pixel
-	 * @param row - row number of the pixel
-	 * @param col - column number of the pixel
-	 * @param featureNum - serial number of the feature
-	 * @return a feature with specified serial number (float type)
-	 */
-	public double getFeature( int row, int col, int featureNum )
-	{
-		int colIndex = row * numCols + col; // vertical position of current feature vector
-		
-		double feature = features[featureNum][colIndex]; // feature vectors are stored as rows 
-		
-		return feature;
-	}
+//	/**
+//	 * returns a single feature with specified serial number for the current location/pixel
+//	 * @param row - row number of the pixel
+//	 * @param col - column number of the pixel
+//	 * @param featureNum - serial number of the feature
+//	 * @return a feature with specified serial number (float type)
+//	 */
+//	public double getFeature( int row, int col, int featureNum )
+//	{
+//		int colIndex = row * numCols + col; // vertical position of current feature vector
+//		
+//		double feature = features[featureNum][colIndex]; // feature vectors are stored as rows 
+//		
+//		return feature;
+//	}
 	
-	/**
-	 * returns a feature vector for the current location/pixel
-	 * @param row - row number of the pixel
-	 * @param col - column number of the pixel
-	 * @return a feature vector of the float type
-	 */
-	public double[] getFeatureVector( int row, int col )
-	{
-		double[] vector = new double[numFeatures];
-		
-		int colIndex = row * numCols + col; // vertical position of current feature vector
-		
-		for ( int j = 0; j < features[0].length; j++ )
-		{
-			vector[j] = features[j][colIndex]; // feature vectors are stored as rows 
-		}
-		
-		return vector;
-		
-	}
+//	/**
+//	 * returns a feature vector for the current location/pixel
+//	 * @param row - row number of the pixel
+//	 * @param col - column number of the pixel
+//	 * @return a feature vector of the float type
+//	 */
+//	public double[] getFeatureVector( int row, int col )
+//	{
+//		double[] vector = new double[numFeatures];
+//		
+//		int colIndex = row * numCols + col; // vertical position of current feature vector
+//		
+//		for ( int j = 0; j < features[0].length; j++ )
+//		{
+//			vector[j] = features[j][colIndex]; // feature vectors are stored as rows 
+//		}
+//		
+//		return vector;
+//		
+//	}
 	
 	/**
 	 * Get the number of rows in the layer/image
@@ -141,21 +141,23 @@ public class LayerSMFeatures {
 	
 	/**
 	 * Return feature vectors for the current layer
-	 * @return array of feature vectors of the float[][] type
+	 * @return DenseMatrix64F of feature vectors each feature in each row
 	 */
-	public double[][] getFeatures()
+	public DenseMatrix64F getFeatures()
 	{
 		return features;
 	}
 	
 	/**
-	 * Returns specific feachure image ad DenseMatrix64F
+	 * Returns specific feature image ad DenseMatrix64F
 	 * @param featureIndex feature index to return 
 	 * @return DenseMatrix64F specified feature in DenseMatrix64F format
 	 */
 	public DenseMatrix64F getFeature(int featureIndex){
 		DenseMatrix64F feature = new DenseMatrix64F(numRows, numCols);
-		feature.data=features[featureIndex];
+
+		System.arraycopy(features.data, featureIndex*numCols, feature.data, 0, numCols);
+		feature.data=features.data;
 		return feature;
 	}
 	
