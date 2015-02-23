@@ -53,7 +53,8 @@ public class SoftmaxRegrClassifier {
 	 */
 	public void setData (LayerSMFeatures layerFeatures)
 	{
-		this.data =  layerFeatures.getFeatures() ;
+		this.data =  layerFeatures.getFeatures();
+		
 		//CommonOps.transpose(data);
 	}
 	
@@ -73,6 +74,9 @@ public class SoftmaxRegrClassifier {
 		
 		data = SMFilterBlock.bsxfunMultiply(data, maskImage); // mask the image
 		
+		for(int i=0; i<data.numCols; i++){
+			data.set(data.numRows-1, i, 1);
+		}
 		// DenseMatrixConversions.saveDenseMatrixToCSV( data, "../../modules/res/data" );
 		
 		this.normalize(); // Normalise the data before classification 
