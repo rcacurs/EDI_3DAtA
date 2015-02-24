@@ -25,6 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
@@ -176,35 +177,34 @@ public class AppController implements Initializable{
 			// run background task
 			
 			// Vessel segmentation TASK
-					Task<Integer> task = new Task<Integer>(){
-						@Override
-						protected Integer call() throws Exception{
-							int iterations;
-							System.out.println("Task start");
-							for(iterations = 0; iterations <=1000; iterations++){
-								if(isCancelled()){
-									break;
-								}
-								updateProgress(iterations, 1000);
-								try {
-						               Thread.sleep(10);
-						           } catch (InterruptedException interrupted) {
-						               if (isCancelled()) {
-						                   break;
-						               }
-						           }
-									
-							}
-							buttonSegmentBloodVessels.setSelected(false);
-							activeSegmentationTask=null;
-							System.out.println("Tasks finished!");
-							return iterations;
+			Task<Integer> task = new Task<Integer>(){
+			@Override
+				protected Integer call(){
+					int iterations;
+					System.out.println("Task start");
+					SMFeatureExtractor featureExtractor = new SMFeatureExtractor("dCodes", 
+	                "dMean", 5, 6);
+					for(iterations = layerRange[0]; iterations <=layerRange[1]; iterations++){
+						if(isCancelled()){
+							break;
 						}
-					};
+									
+									
+						updateProgress(iterations-layerRange[0], layerRange[1]+1-layerRange[0]);
+					}
+					return iterations;
+				}
+			};
 			progressIndicatorSegmentation.progressProperty().bind(task.progressProperty());
+			 task.setOnSucceeded(e -> {
+				 	System.out.println("Tasks finished!");
+				 	buttonSegmentBloodVessels.setSelected(false);
+					activeSegmentationTask=null;
+			    });
 			new Thread(task).start();
 			activeSegmentationTask = task;
 		} else{
+			System.out.println("Click");
 			if(activeSegmentationTask!=null){
 				activeSegmentationTask.cancel();
 				activeSegmentationTask=null;
