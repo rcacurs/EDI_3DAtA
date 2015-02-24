@@ -7,11 +7,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 
 
 public class Main extends Application {
 	static MetaImage selectedTomographyScan;
+	static MetaImage tomographyScanLungMasks;
 	static int selectedLayer=100;
 	static DenseMatrix64F currentLayerImage;
 	
