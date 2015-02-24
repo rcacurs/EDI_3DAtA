@@ -37,6 +37,7 @@ public class SMFeatureExtractor {
 		System.out.println(strCodes);
 		System.out.println(strMeans);
 		setCodes(strCodes.substring(0, strCodes.length()-4));
+		CommonOps.transpose(codes);
 		setMeans(strMeans.substring(0, strMeans.length()-4));
 		this.patchSize=5;
 		this.numScales=6;
