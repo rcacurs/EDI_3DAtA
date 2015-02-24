@@ -42,8 +42,8 @@ public class SMFeatureExtractor {
 	 * set patch size 5, and number of scales 6
 	 */
 	public SMFeatureExtractor(){
-		URL urlCodes = SMFeatureExtractor.class.getResource("/../../../../../res/dCodes.csv");
-		URL urlMeans = SMFeatureExtractor.class.getResource("/../../../../../res/dMean.csv");
+		URL urlCodes = SMFeatureExtractor.class.getResource("dCodes.csv");
+		URL urlMeans = SMFeatureExtractor.class.getResource("dMean.csv");
 		System.out.println(urlCodes);
 		System.out.println(urlMeans);
 		String strCodes = urlCodes.getPath();
@@ -51,7 +51,7 @@ public class SMFeatureExtractor {
 		System.out.println(strCodes);
 		System.out.println(strMeans);
 		setCodes(strCodes.substring(0, strCodes.length()-4));
-		setMeans(strMeans.substring(0, strCodes.length()-4));
+		setMeans(strMeans.substring(0, strMeans.length()-4));
 		this.patchSize=5;
 		this.numScales=6;
 	}
@@ -61,6 +61,7 @@ public class SMFeatureExtractor {
 	 * @param fileName path to the .csv file containing codes(not including file extension).
 	 */
 	public void setCodes(String fileName){
+		System.out.println(fileName);
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
 	}
 	
@@ -69,6 +70,7 @@ public class SMFeatureExtractor {
 	 * @param fileName path to the .csv file containing codes(not including file extension)
 	 */
 	public void setMeans(String fileName){
+		System.out.println(fileName);
 		means = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
 	}
 	
