@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.ejml.data.DenseMatrix64F;
+
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -25,6 +27,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.LayerSMFeatures;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
@@ -174,25 +177,29 @@ public class AppController implements Initializable{
 				buttonSegmentBloodVessels.setSelected(false);
 				return;
 			}
+			
 			// run background task
 			
 			// Vessel segmentation TASK
 			Task<Integer> task = new Task<Integer>(){
 			@Override
 				protected Integer call(){
-					int iterations;
+					int layer;
 					System.out.println("Task start");
-					SMFeatureExtractor featureExtractor = new SMFeatureExtractor("dCodes", 
-	                "dMean", 5, 6);
-					for(iterations = layerRange[0]; iterations <=layerRange[1]; iterations++){
+					SMFeatureExtractor featureExtractor = new SMFeatureExtractor();
+					DenseMatrix64F layerImage;
+					LayerSMFeatures layerFeatures;
+					for(layer = layerRange[0]; layer <=layerRange[1]; layer++){
 						if(isCancelled()){
 							break;
 						}
-									
-									
-						updateProgress(iterations-layerRange[0], layerRange[1]+1-layerRange[0]);
+						updateProgress(layer-layerRange[0], layerRange[1]-layerRange[0]);
+						layerImage = Main.tomographyScanLungMasks.getLayerImage(layer);			
+						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+						
+						
 					}
-					return iterations;
+					return 1;
 				}
 			};
 			progressIndicatorSegmentation.progressProperty().bind(task.progressProperty());
@@ -201,7 +208,9 @@ public class AppController implements Initializable{
 				 	buttonSegmentBloodVessels.setSelected(false);
 					activeSegmentationTask=null;
 			    });
-			new Thread(task).start();
+			Thread thr = new Thread(task);
+			thr.setPriority(Thread.MAX_PRIORITY);
+			thr.start();
 			activeSegmentationTask = task;
 		} else{
 			System.out.println("Click");

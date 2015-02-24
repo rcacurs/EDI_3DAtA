@@ -22,20 +22,6 @@ public class SMFeatureExtractor {
 	private int patchSize;
 	private int numScales;
 	
-	/**
-	 * Feature extractor constructor
-	 * @param codesFileName - file name to .csv file containing codes (omitting extension)
-	 * @param meansFileName - file name to .csv file containing means (omitting extension)
-	 * @param patchSize - patch size for algorithm
-	 * @param numScales - number of scales
-	 */
-	public SMFeatureExtractor(String codesFileName, String meansFileName, int patchSize, int numScales){
-		setCodes(codesFileName);	
-		CommonOps.transpose(codes);
-		setMeans(meansFileName);
-		this.patchSize = patchSize;
-		this.numScales = numScales;
-	}
 	
 	/** Default constructor for SMFeatureExtractor (CUrrentlu not working :))
 	 * it sets default dMeans.csv and dCodes.csv /res file path, relative from class path
@@ -55,12 +41,28 @@ public class SMFeatureExtractor {
 		this.patchSize=5;
 		this.numScales=6;
 	}
+	
+	/**
+	 * Feature extractor constructor
+	 * @param codesFileName - file name to .csv file containing codes (omitting extension)
+	 * @param meansFileName - file name to .csv file containing means (omitting extension)
+	 * @param patchSize - patch size for algorithm
+	 * @param numScales - number of scales
+	 */
+	public SMFeatureExtractor(String codesFileName, String meansFileName, int patchSize, int numScales){
+		setCodes(codesFileName);	
+		CommonOps.transpose(codes);
+		setMeans(meansFileName);
+		this.patchSize = patchSize;
+		this.numScales = numScales;
+	}
 
 	/**
 	 * Function for setting feature extractor codes
 	 * @param fileName path to the .csv file containing codes(not including file extension).
 	 */
 	public void setCodes(String fileName){
+		System.out.println("Set codes");
 		System.out.println(fileName);
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
 	}
