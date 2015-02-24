@@ -29,6 +29,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.LayerSMFeatures;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.SoftmaxRegrClassifier;
+import lv.edi.EDI_3DAtA.common.VolumetricData;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
@@ -187,17 +189,30 @@ public class AppController implements Initializable{
 					int layer;
 					System.out.println("Task start");
 					SMFeatureExtractor featureExtractor = new SMFeatureExtractor();
+					
+					SoftmaxRegrClassifier classifier = new SoftmaxRegrClassifier(Main.selectedTomographyScan.getLayerImage(0).numRows, Main.selectedTomographyScan.getLayerImage(0).numCols);
 					DenseMatrix64F layerImage;
+					DenseMatrix64F layerMask;
+					DenseMatrix64F layerVesselSegmentated;
+					VolumetricData segmentationDataLocal = new VolumetricData();
 					LayerSMFeatures layerFeatures;
 					for(layer = layerRange[0]; layer <=layerRange[1]; layer++){
 						if(isCancelled()){
 							break;
 						}
 						updateProgress(layer-layerRange[0], layerRange[1]-layerRange[0]);
-						layerImage = Main.tomographyScanLungMasks.getLayerImage(layer);			
+						layerImage = Main.selectedTomographyScan.getLayerImage(layer);	
 						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+						layerMask = Main.tomographyScanLungMasks.getLayerImage(layer);
 						
+						classifier.setData(layerFeatures);
+						classifier.setMaskImage(layerMask);
 						
+						classifier.classify();
+						
+						layerVesselSegmentated = classifier.getResult();
+						segmentationDataLocal.addLayer(layerVesselSegmentated);
+						Main.volumeVesselSegmentationData=segmentationDataLocal;
 					}
 					return 1;
 				}
