@@ -30,12 +30,8 @@ public class SMFeatureExtractor {
 	public SMFeatureExtractor(){
 		URL urlCodes = SMFeatureExtractor.class.getResource("dCodes.csv");
 		URL urlMeans = SMFeatureExtractor.class.getResource("dMean.csv");
-		System.out.println(urlCodes);
-		System.out.println(urlMeans);
 		String strCodes = urlCodes.getPath();
 		String strMeans = urlMeans.getPath();
-		System.out.println(strCodes);
-		System.out.println(strMeans);
 		setCodes(strCodes.substring(0, strCodes.length()-4));
 		CommonOps.transpose(codes);
 		setMeans(strMeans.substring(0, strMeans.length()-4));
@@ -63,8 +59,6 @@ public class SMFeatureExtractor {
 	 * @param fileName path to the .csv file containing codes(not including file extension).
 	 */
 	public void setCodes(String fileName){
-		System.out.println("Set codes");
-		System.out.println(fileName);
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
 	}
 	
@@ -73,7 +67,6 @@ public class SMFeatureExtractor {
 	 * @param fileName path to the .csv file containing codes(not including file extension)
 	 */
 	public void setMeans(String fileName){
-		System.out.println(fileName);
 		means = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
 	}
 	
