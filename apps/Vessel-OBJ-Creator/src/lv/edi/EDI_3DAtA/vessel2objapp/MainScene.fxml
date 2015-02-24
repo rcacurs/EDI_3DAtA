@@ -18,7 +18,7 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem fx:id="menuItemOpenCTFile" mnemonicParsing="false" onAction="#selectCTScanFile" text="Open CT Scan File..." />
-                        <MenuItem mnemonicParsing="false" text="Export to .obj (wavefront format)" />
+                        <MenuItem fx:id="menuExportToObj" mnemonicParsing="false" onAction="#exportToObj" text="Export to .obj (wavefront format)" />
                     <MenuItem mnemonicParsing="false" text="Cancel" />
                   </items>
                 </Menu>
@@ -223,7 +223,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <TextField prefHeight="25.0" prefWidth="37.0" text="0.95" />
+                                    <TextField fx:id="textFieldSegmentationThreshold" onKeyTyped="#filterThresholdSelectedTxtField" prefHeight="25.0" prefWidth="37.0" text="0.95" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT">

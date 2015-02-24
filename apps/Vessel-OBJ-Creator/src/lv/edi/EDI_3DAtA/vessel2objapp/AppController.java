@@ -2,8 +2,10 @@ package lv.edi.EDI_3DAtA.vessel2objapp;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import org.ejml.data.DenseMatrix64F;
@@ -24,6 +26,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -32,6 +35,7 @@ import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.SoftmaxRegrClassifier;
 import lv.edi.EDI_3DAtA.common.VolumetricData;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
+import lv.edi.EDI_3DAtA.marchingcubes.MarchingCubes;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
 public class AppController implements Initializable{
@@ -40,6 +44,8 @@ public class AppController implements Initializable{
 	private Task<Integer> activeSegmentationTask;
 	@FXML
 	private MenuItem menuItemOpenCTFile;
+	@FXML
+	private MenuItem menuExportToObj;
 	@FXML
     private ImageView ctScanImageView;
 	@FXML
@@ -70,7 +76,8 @@ public class AppController implements Initializable{
 	private ToggleButton buttonSegmentBloodVessels;
 	@FXML
 	private ProgressIndicator progressIndicatorSegmentation;
-	
+	@FXML
+	private TextField textFieldSegmentationThreshold;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}
@@ -143,9 +150,64 @@ public class AppController implements Initializable{
 		((MenuItem)event.getSource()).getParentMenu().hide();
 	}
 	@FXML
+	public void exportToObj(ActionEvent event){
+		if(Main.volumeVesselSegmentationData==null){
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Blood vessel segmentation data not available");
+			alert.setContentText("Please first run blood bessel segmentation!");
+			alert.showAndWait();
+			return;
+		}
+		double threshold;
+		try{
+			threshold = Double.parseDouble(textFieldSegmentationThreshold.getText());
+		}catch(NumberFormatException ex){
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Specified threshold value wrong");
+			alert.setContentText("Please check entered threshold value and ensure it is in range from 0.0 to 1.0!");
+			alert.showAndWait();
+			return;
+		}
+		if(threshold>1){
+			threshold = 1;
+		}
+		DirectoryChooser dirChooser = new DirectoryChooser();
+		dirChooser.setTitle("Select output folder for .obj file");
+		File exportDir = dirChooser.showDialog(mainStage);
+		if(exportDir==null){
+			return;
+		}
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Exporting to .obj");
+		alert.setHeaderText(null);
+		alert.setContentText("Exporting to .obj file...");
+		alert.show();
+		
+		MarchingCubes mc = new MarchingCubes(Main.volumeVesselSegmentationData);
+		ArrayList<DenseMatrix64F> vessel3DVertexes = mc.generateIsoSurface(threshold);
+		
+		try {
+			MarchingCubes.saveVerticesToObj(vessel3DVertexes, exportDir.toString()+"/model.obj");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		alert.close();
+	}
+	@FXML
 	public void filterLayerSelecteTxtField(KeyEvent arg0){
 		String chara = arg0.getCharacter();
 		if("0123456789".contains(chara)){
+		} else{
+			arg0.consume();
+		}
+	}
+	@FXML
+	public void filterThresholdSelectedTxtField(KeyEvent arg0){
+		String chara = arg0.getCharacter();
+		if("0123456789.".contains(chara)){	
 		} else{
 			arg0.consume();
 		}
@@ -180,6 +242,7 @@ public class AppController implements Initializable{
 				return;
 			}
 			
+			
 			// run background task
 			
 			// Vessel segmentation TASK
@@ -198,9 +261,10 @@ public class AppController implements Initializable{
 					LayerSMFeatures layerFeatures;
 					for(layer = layerRange[0]; layer <=layerRange[1]; layer++){
 						if(isCancelled()){
+							updateProgress(0, 100);
 							break;
 						}
-						updateProgress(layer-layerRange[0], layerRange[1]-layerRange[0]);
+						
 						layerImage = Main.selectedTomographyScan.getLayerImage(layer);	
 						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
 						layerMask = Main.tomographyScanLungMasks.getLayerImage(layer);
@@ -213,8 +277,10 @@ public class AppController implements Initializable{
 						layerVesselSegmentated = classifier.getResult();
 						segmentationDataLocal.addLayer(layerVesselSegmentated);
 						Main.volumeVesselSegmentationData=segmentationDataLocal;
+						updateProgress(layer-layerRange[0]+1, (layerRange[1]-layerRange[0])+1);
 					}
-					return 1;
+					
+					return 100;
 				}
 			};
 			progressIndicatorSegmentation.progressProperty().bind(task.progressProperty());
