@@ -18,6 +18,7 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem fx:id="menuItemOpenCTFile" mnemonicParsing="false" onAction="#selectCTScanFile" text="Open CT Scan File..." />
+                        <MenuItem mnemonicParsing="false" text="Export to .obj (wavefront format)" />
                     <MenuItem mnemonicParsing="false" text="Cancel" />
                   </items>
                 </Menu>
@@ -61,7 +62,7 @@
                            </children>
                         </AnchorPane>
                         <Separator orientation="VERTICAL" prefHeight="777.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                        <VBox prefHeight="777.0" prefWidth="407.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="777.0" prefWidth="407.0">
                            <children>
                               <Label alignment="CENTER" prefHeight="49.0" prefWidth="292.0" text="CT Scan Info" textAlignment="CENTER">
                                  <font>
@@ -192,6 +193,49 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
+                              <Separator prefHeight="0.0" />
+                              <Label alignment="CENTER" prefHeight="49.0" prefWidth="292.0" text="Options" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Separator prefHeight="0.0" />
+                              <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="302.0">
+                                 <children>
+                                    <Label prefHeight="51.0" prefWidth="170.0" text="Layer Range">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="textFieldSegmLowRange" onKeyTyped="#filterLayerSelecteTxtField" prefHeight="25.0" prefWidth="37.0" text="0" />
+                                    <Label text=" - ">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="textFieldSegmHighRange" onKeyTyped="#filterLayerSelecteTxtField" prefHeight="25.0" prefWidth="37.0" text="100" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="302.0">
+                                 <children>
+                                    <Label prefHeight="20.0" prefWidth="170.0" text="Segmentation Threshold">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField prefHeight="25.0" prefWidth="37.0" text="0.95" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <ToggleButton fx:id="buttonSegmentBloodVessels" mnemonicParsing="false" onAction="#onButtonSegmentBloodVessels" prefHeight="39.0" prefWidth="248.0" text="Segment Blood Vessels">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </ToggleButton>
+                                    <ProgressIndicator fx:id="progressIndicatorSegmentation" prefHeight="40.0" prefWidth="51.0" progress="0.0" />
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>

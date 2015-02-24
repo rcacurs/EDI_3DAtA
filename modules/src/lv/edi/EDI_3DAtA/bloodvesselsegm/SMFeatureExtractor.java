@@ -22,6 +22,23 @@ public class SMFeatureExtractor {
 	private int patchSize;
 	private int numScales;
 	
+	
+	/** Default constructor for SMFeatureExtractor (CUrrentlu not working :))
+	 * it sets default dMeans.csv and dCodes.csv /res file path, relative from class path
+	 * set patch size 5, and number of scales 6
+	 */
+	public SMFeatureExtractor(){
+		URL urlCodes = SMFeatureExtractor.class.getResource("dCodes.csv");
+		URL urlMeans = SMFeatureExtractor.class.getResource("dMean.csv");
+		String strCodes = urlCodes.getPath();
+		String strMeans = urlMeans.getPath();
+		setCodes(strCodes.substring(0, strCodes.length()-4));
+		CommonOps.transpose(codes);
+		setMeans(strMeans.substring(0, strMeans.length()-4));
+		this.patchSize=5;
+		this.numScales=6;
+	}
+	
 	/**
 	 * Feature extractor constructor
 	 * @param codesFileName - file name to .csv file containing codes (omitting extension)
@@ -35,25 +52,6 @@ public class SMFeatureExtractor {
 		setMeans(meansFileName);
 		this.patchSize = patchSize;
 		this.numScales = numScales;
-	}
-	
-	/** Default constructor for SMFeatureExtractor (CUrrentlu not working :))
-	 * it sets default dMeans.csv and dCodes.csv /res file path, relative from class path
-	 * set patch size 5, and number of scales 6
-	 */
-	public SMFeatureExtractor(){
-		URL urlCodes = SMFeatureExtractor.class.getResource("/../../../../../res/dCodes.csv");
-		URL urlMeans = SMFeatureExtractor.class.getResource("/../../../../../res/dMean.csv");
-		System.out.println(urlCodes);
-		System.out.println(urlMeans);
-		String strCodes = urlCodes.getPath();
-		String strMeans = urlMeans.getPath();
-		System.out.println(strCodes);
-		System.out.println(strMeans);
-		setCodes(strCodes.substring(0, strCodes.length()-4));
-		setMeans(strMeans.substring(0, strCodes.length()-4));
-		this.patchSize=5;
-		this.numScales=6;
 	}
 
 	/**

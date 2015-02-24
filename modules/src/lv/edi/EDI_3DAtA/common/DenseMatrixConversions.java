@@ -6,6 +6,7 @@ import org.ejml.ops.CommonOps;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -133,7 +134,7 @@ public class DenseMatrixConversions
 				outFile.write( DenseMatrixConversions.DenseMatrixToCSVString(matrix) ); // write(char[] buf) - writes an array of characters.
 				outFile.close();
 			} 
-			catch (Exception ex) 
+			catch (IOException ex) 
 			{
 				System.out.println("File not saved");
 			}
@@ -184,12 +185,17 @@ public class DenseMatrixConversions
 				}
 			}
 			
-			buffer.close(); // close the BufferedReader. We only need to close the outer wrapper
+			try {
+				buffer.close(); // close the BufferedReader. We only need to close the outer wrapper
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			return new DenseMatrix64F(outputArray); // return the matrix
 			
 		} 
-		catch (Exception ex) 
+		catch (IOException ex) 
 		{
 			System.out.println("File not loaded");
 			return null; // return the null pointer

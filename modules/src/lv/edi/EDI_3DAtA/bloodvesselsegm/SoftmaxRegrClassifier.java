@@ -1,5 +1,7 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
+import java.net.URL;
+
 import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 
 import org.ejml.data.DenseMatrix64F;
@@ -36,6 +38,23 @@ public class SoftmaxRegrClassifier {
 		this.imHeight = imHeight;
 		this.imWidth = imWidth;
 		// this.maskImage = maskImage;
+	}
+	
+	public SoftmaxRegrClassifier(int imHeight, int imWidth){
+		URL urlMeans = SoftmaxRegrClassifier.class.getResource("scaleparamsMean.csv");
+		URL urlSd = SoftmaxRegrClassifier.class.getResource("scaleparamsSd.csv");
+		URL urlModel = SoftmaxRegrClassifier.class.getResource("model.csv");
+		
+		String strMeans = urlMeans.getPath();
+		String strSd = urlSd.getPath();
+		String strModel = urlModel.getPath();
+		
+		this.mean = DenseMatrixConversions.loadCSVtoDenseMatrix(strMeans.substring(0, strMeans.length()-4));
+		this.sd = DenseMatrixConversions.loadCSVtoDenseMatrix(strSd.substring(0, strSd.length()-4));
+		this.model = DenseMatrixConversions.loadCSVtoDenseMatrix(strModel.substring(0, strModel.length()-4));
+		
+		this.imHeight = imHeight;
+		this.imWidth = imWidth;
 	}
 	
 	/**
@@ -219,22 +238,22 @@ public class SoftmaxRegrClassifier {
 		SMFilterBlock.bsxfunDivide(data, sd); // sd-normalization
 	}
 	
-	/**
-	 * add column of ones at the end of the array
-	 */
-	private void addLastColumnOfOnes()
-	{	
-		DenseMatrix64F temp = new DenseMatrix64F( new double[data.numRows][data.numCols+1] ); 
-		CommonOps.insert(data, temp, 0, 0);
-		int col = data.numCols;
-		int numRows = data.numRows;
-		data=null;
-		for ( int row = 0; row < numRows; row++ )
-		{
-			temp.set( row, col, 1 ); // set the entries in the last column to 1
-		}
-		this.data = temp;
-	}
+//	/**
+//	 * add column of ones at the end of the array
+//	 */
+//	private void addLastColumnOfOnes()
+//	{	
+//		DenseMatrix64F temp = new DenseMatrix64F( new double[data.numRows][data.numCols+1] ); 
+//		CommonOps.insert(data, temp, 0, 0);
+//		int col = data.numCols;
+//		int numRows = data.numRows;
+//		data=null;
+//		for ( int row = 0; row < numRows; row++ )
+//		{
+//			temp.set( row, col, 1 ); // set the entries in the last column to 1
+//		}
+//		this.data = temp;
+//	}
 	
 	/**
 	 * This function returns the classification result

@@ -6,26 +6,38 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.ejml.data.DenseMatrix64F;
+
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.LayerSMFeatures;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.SoftmaxRegrClassifier;
+import lv.edi.EDI_3DAtA.common.VolumetricData;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
 public class AppController implements Initializable{
 	private Stage mainStage;
 	
+	private Task<Integer> activeSegmentationTask;
 	@FXML
 	private MenuItem menuItemOpenCTFile;
 	@FXML
@@ -50,6 +62,14 @@ public class AppController implements Initializable{
 	private Label labelScanSpacingY;
 	@FXML
 	private Label labelScanSpacingZ;
+	@FXML
+	private TextField textFieldSegmHighRange;
+	@FXML
+	private TextField textFieldSegmLowRange;
+	@FXML
+	private ToggleButton buttonSegmentBloodVessels;
+	@FXML
+	private ProgressIndicator progressIndicatorSegmentation;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -95,7 +115,8 @@ public class AppController implements Initializable{
 			return;
 		}
 		try {
-			Main.selectedTomographyScan= new MetaImage(scanFile);
+			Main.selectedTomographyScan = new MetaImage(scanFile);
+			
 			updateSelectedLayerIndex(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			
@@ -109,6 +130,10 @@ public class AppController implements Initializable{
 			labelScanSpacingX.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(0)));
 			labelScanSpacingY.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(1)));
 			labelScanSpacingZ.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(2)));
+			
+			File scanDir = Main.selectedTomographyScan.getElementHeaderFile().getParentFile().getParentFile();
+			File scanLungMask = new File(scanDir.toString()+"\\Lungmasks\\"+scanFile.getName());
+			Main.tomographyScanLungMasks = new MetaImage(scanLungMask);
 			
 			
 		} catch (IOException e) {
@@ -124,6 +149,92 @@ public class AppController implements Initializable{
 		} else{
 			arg0.consume();
 		}
+	}
+	
+	@FXML
+	// calback for button that start blood vessel segmentation
+		
+	public void onButtonSegmentBloodVessels(ActionEvent event){
+		if(buttonSegmentBloodVessels.isSelected()){
+			if(Main.selectedTomographyScan==null){
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText("CT file not opened");
+				alert.setContentText("Please open CT scan file: File->Open CT Scan File...");
+				alert.showAndWait();
+				buttonSegmentBloodVessels.setSelected(false);
+				return;
+			}
+			if(Main.tomographyScanLungMasks==null){
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText("Problem finding lung mask file!");
+				alert.setContentText("Please check if there to opened CT scan file is corresponding file in folder relative to it (../Lungscans)");
+				alert.showAndWait();
+				buttonSegmentBloodVessels.setSelected(false);
+				return;
+			}
+			int[] layerRange = parseSelectedLayersRange();
+			if(layerRange==null){
+				buttonSegmentBloodVessels.setSelected(false);
+				return;
+			}
+			
+			// run background task
+			
+			// Vessel segmentation TASK
+			Task<Integer> task = new Task<Integer>(){
+			@Override
+				protected Integer call(){
+					int layer;
+					System.out.println("Task start");
+					SMFeatureExtractor featureExtractor = new SMFeatureExtractor();
+					
+					SoftmaxRegrClassifier classifier = new SoftmaxRegrClassifier(Main.selectedTomographyScan.getLayerImage(0).numRows, Main.selectedTomographyScan.getLayerImage(0).numCols);
+					DenseMatrix64F layerImage;
+					DenseMatrix64F layerMask;
+					DenseMatrix64F layerVesselSegmentated;
+					VolumetricData segmentationDataLocal = new VolumetricData();
+					LayerSMFeatures layerFeatures;
+					for(layer = layerRange[0]; layer <=layerRange[1]; layer++){
+						if(isCancelled()){
+							break;
+						}
+						updateProgress(layer-layerRange[0], layerRange[1]-layerRange[0]);
+						layerImage = Main.selectedTomographyScan.getLayerImage(layer);	
+						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+						layerMask = Main.tomographyScanLungMasks.getLayerImage(layer);
+						
+						classifier.setData(layerFeatures);
+						classifier.setMaskImage(layerMask);
+						
+						classifier.classify();
+						
+						layerVesselSegmentated = classifier.getResult();
+						segmentationDataLocal.addLayer(layerVesselSegmentated);
+						Main.volumeVesselSegmentationData=segmentationDataLocal;
+					}
+					return 1;
+				}
+			};
+			progressIndicatorSegmentation.progressProperty().bind(task.progressProperty());
+			 task.setOnSucceeded(e -> {
+				 	System.out.println("Tasks finished!");
+				 	buttonSegmentBloodVessels.setSelected(false);
+					activeSegmentationTask=null;
+			    });
+			Thread thr = new Thread(task);
+			thr.setPriority(Thread.MAX_PRIORITY);
+			thr.start();
+			activeSegmentationTask = task;
+		} else{
+			System.out.println("Click");
+			if(activeSegmentationTask!=null){
+				activeSegmentationTask.cancel();
+				activeSegmentationTask=null;
+			}
+		}
+		
 	}
 	
 	// HELPER FUNCTIONS
@@ -153,4 +264,38 @@ public class AppController implements Initializable{
 			ctScanImageView.setImage(image);
 		}
 	}
+
+	// method parses selected range for layers that are to be scanned.
+	private int[] parseSelectedLayersRange(){
+		int range[] = new int[2];
+		Alert alert = new Alert(AlertType.ERROR);
+		try {
+			range[0] = Integer.parseInt(textFieldSegmLowRange.getText());
+			range[1] = Integer.parseInt(textFieldSegmHighRange.getText());
+		} catch (NumberFormatException e) {
+			
+			alert.setTitle("Error");
+			alert.setHeaderText("Error parsing given layer range!");
+			alert.setContentText("There seems to be problem with specified layer range for wich to perform segmentation.");
+			alert.showAndWait();
+			return range;
+		}
+		if(range[0]>range[1]){
+			alert.setTitle("Error");
+			alert.setHeaderText("Error parsing given layer range!");
+			alert.setContentText("First specified range should be smaller index.");
+			alert.showAndWait();
+			return range;
+		}
+		if(range[1]>=((int)Main.selectedTomographyScan.getDimSize().get(2))){
+			alert.setTitle("Error");
+			alert.setHeaderText("Error parsing given layer range!");
+			alert.setContentText("Selected layer range shouldn't exceed number of layers in selected CT scan.");
+			alert.showAndWait();
+			return range;
+		}
+
+		return range;
+	}
+	
 }
