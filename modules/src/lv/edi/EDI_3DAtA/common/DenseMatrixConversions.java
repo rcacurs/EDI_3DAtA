@@ -7,6 +7,8 @@ import org.ejml.ops.CommonOps;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -153,6 +155,65 @@ public class DenseMatrixConversions
 		try 
 		{
 			FileReader reader = new FileReader( fileName + ".csv" ); // define FileReader
+			BufferedReader buffer = new BufferedReader(reader); // define BufferedReader
+			
+			String tempString = ""; // the string to store the line from the CSV file 
+			ArrayList <double[]> storeArrayList = new ArrayList<double[]>(); // define the ArrayList to store the arrays of doubles
+			int countMax = 0; // variable to store the number of Tokens in the current string
+			
+			while ( ( tempString = buffer.readLine() ) != null ) // while the file has more lines to read
+			{
+				StringTokenizer tokenizer = new StringTokenizer(tempString, ","); // define the StringTokenizer and the delimiter
+				
+				countMax = tokenizer.countTokens(); // the number of tokens in the string
+				double[] rowFromCSV = new double[countMax]; // vector to store the numbers from the string
+				
+				for ( int i = 0; i < countMax; i++ )
+				{
+					rowFromCSV[i] = Double.parseDouble( tokenizer.nextToken() ); // read the tokens and convert them to double
+				}
+				storeArrayList.add(rowFromCSV); // save the array to the ArrayList
+			}
+			
+			double[][] outputArray = new double[storeArrayList.size()][countMax]; // double 2D array to store the data from the ArrayList
+			double[] rowFromCSV = new double[countMax]; // vector to store the current row from the ArrayList
+			for ( int row = 0; row < outputArray.length; row++ )
+			{
+				rowFromCSV = storeArrayList.get(row); // get current row
+				
+				for ( int col = 0; col < outputArray[0].length; col++ )
+				{
+					outputArray[row][col] = rowFromCSV[col]; // fill the output array
+				}
+			}
+			
+			try {
+				buffer.close(); // close the BufferedReader. We only need to close the outer wrapper
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return new DenseMatrix64F(outputArray); // return the matrix
+			
+		} 
+		catch (IOException ex) 
+		{
+			System.out.println("File not loaded");
+			return null; // return the null pointer
+		}
+	}
+	
+	/**
+     * load the data from CSV file into the output matrix of the DenseMatrix64F type
+     * @param is - input stream file representing .csv file
+     * @return loaded data in the DenseMatrix64F format
+     */
+	public static DenseMatrix64F loadCSVtoDenseMatrixFromInputStream( InputStream is )
+	{
+		try 
+		{
+			InputStreamReader reader = new InputStreamReader( is ); // define FileReader
 			BufferedReader buffer = new BufferedReader(reader); // define BufferedReader
 			
 			String tempString = ""; // the string to store the line from the CSV file 
