@@ -1,21 +1,22 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
-import java.net.URL;
+import java.io.InputStream;
+
 
 import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-///**
-// * 
-// * @author Code - Ričards Cacurs.
-// * 
-// *  Class representing Stacked Multiscale Feature extractor from paper:
-// *  Adam Coates and Andrew Y. Ng "Learning Feature Representations with K-means", 
-// *  Neural Networks: Tricks of the Trade, 2nd edn, Springer, 2012.
-// *
-// */
+/**
+ * 
+ * @author Code - Ričards Cacurs.
+ * 
+ *  Class representing Stacked Multiscale Feature extractor from paper:
+ *  Adam Coates and Andrew Y. Ng "Learning Feature Representations with K-means", 
+ *  Neural Networks: Tricks of the Trade, 2nd edn, Springer, 2012.
+ *
+ */
 public class SMFeatureExtractor {
 	private DenseMatrix64F codes;
 	private DenseMatrix64F means;
@@ -28,13 +29,10 @@ public class SMFeatureExtractor {
 	 * set patch size 5, and number of scales 6
 	 */
 	public SMFeatureExtractor(){
-		URL urlCodes = SMFeatureExtractor.class.getResource("dCodes.csv");
-		URL urlMeans = SMFeatureExtractor.class.getResource("dMean.csv");
-		String strCodes = urlCodes.getPath();
-		String strMeans = urlMeans.getPath();
-		setCodes(strCodes.substring(0, strCodes.length()-4));
+		
+		setCodes(SMFeatureExtractor.class.getResourceAsStream("dCodes.csv"));
 		CommonOps.transpose(codes);
-		setMeans(strMeans.substring(0, strMeans.length()-4));
+		setMeans(SMFeatureExtractor.class.getResourceAsStream("dMean.csv"));
 		this.patchSize=5;
 		this.numScales=6;
 	}
@@ -53,7 +51,13 @@ public class SMFeatureExtractor {
 		this.patchSize = patchSize;
 		this.numScales = numScales;
 	}
-
+	/**
+	 * Function for setting feature extractor codes from InputStream
+	 * @param inputStream InputStream object representing stream from .csv file
+	 */
+	public void setCodes(InputStream iStream){
+		codes = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(iStream);
+	}
 	/**
 	 * Function for setting feature extractor codes
 	 * @param fileName path to the .csv file containing codes(not including file extension).
@@ -62,6 +66,13 @@ public class SMFeatureExtractor {
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrix(fileName);
 	}
 	
+	/**
+	 * Function for setting feature extractor means from InputStream
+	 * @param inputStream InputStream object representing stream from .csv file
+	 */
+	public void setMeans(InputStream iStream){
+		means = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(iStream);
+	}
 	/**
 	 * Function for setting feature extractor means
 	 * @param fileName path to the .csv file containing codes(not including file extension)

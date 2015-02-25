@@ -41,17 +41,10 @@ public class SoftmaxRegrClassifier {
 	}
 	
 	public SoftmaxRegrClassifier(int imHeight, int imWidth){
-		URL urlMeans = SoftmaxRegrClassifier.class.getResource("scaleparamsMean.csv");
-		URL urlSd = SoftmaxRegrClassifier.class.getResource("scaleparamsSd.csv");
-		URL urlModel = SoftmaxRegrClassifier.class.getResource("model.csv");
 		
-		String strMeans = urlMeans.getPath();
-		String strSd = urlSd.getPath();
-		String strModel = urlModel.getPath();
-		
-		this.mean = DenseMatrixConversions.loadCSVtoDenseMatrix(strMeans.substring(0, strMeans.length()-4));
-		this.sd = DenseMatrixConversions.loadCSVtoDenseMatrix(strSd.substring(0, strSd.length()-4));
-		this.model = DenseMatrixConversions.loadCSVtoDenseMatrix(strModel.substring(0, strModel.length()-4));
+		this.mean = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SoftmaxRegrClassifier.class.getResourceAsStream("scaleparamsMean.csv"));
+		this.sd = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SoftmaxRegrClassifier.class.getResourceAsStream("scaleparamsSd.csv"));
+		this.model = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SoftmaxRegrClassifier.class.getResourceAsStream("model.csv"));
 		
 		this.imHeight = imHeight;
 		this.imWidth = imWidth;
