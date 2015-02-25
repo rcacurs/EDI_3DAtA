@@ -194,6 +194,7 @@ public class AppController implements Initializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		vessel3DVertexes = null;
 		alert.close();
 	}
 	@FXML
@@ -278,6 +279,9 @@ public class AppController implements Initializable{
 						segmentationDataLocal.addLayer(layerVesselSegmentated);
 						Main.volumeVesselSegmentationData=segmentationDataLocal;
 						updateProgress(layer-layerRange[0]+1, (layerRange[1]-layerRange[0])+1);
+						layerFeatures=null;
+						layerMask=null;
+						layerImage=null;
 					}
 					
 					return 100;
