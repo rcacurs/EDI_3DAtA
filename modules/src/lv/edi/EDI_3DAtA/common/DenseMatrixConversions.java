@@ -223,7 +223,6 @@ public class DenseMatrixConversions
 			while ( ( tempString = buffer.readLine() ) != null ) // while the file has more lines to read
 			{
 				StringTokenizer tokenizer = new StringTokenizer(tempString, ","); // define the StringTokenizer and the delimiter
-				
 				countMax = tokenizer.countTokens(); // the number of tokens in the string
 				double[] rowFromCSV = new double[countMax]; // vector to store the numbers from the string
 				
