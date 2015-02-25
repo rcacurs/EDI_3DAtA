@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 import org.ejml.data.DenseMatrix64F;
@@ -189,7 +192,14 @@ public class AppController implements Initializable{
 		ArrayList<DenseMatrix64F> vessel3DVertexes = mc.generateIsoSurface(threshold);
 		
 		try {
-			MarchingCubes.saveVerticesToObj(vessel3DVertexes, exportDir.toString()+"/model.obj");
+			Date date = new Date();
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(date);
+			MarchingCubes.saveVerticesToObj(vessel3DVertexes, exportDir.toString()+"/blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
+																						   +(cal.get(Calendar.MONTH)+1)+""
+																						   +(cal.get(Calendar.YEAR))+""
+																						   +(cal.get(Calendar.HOUR))+""+
+																						   +(cal.get(Calendar.MINUTE))+".obj");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
