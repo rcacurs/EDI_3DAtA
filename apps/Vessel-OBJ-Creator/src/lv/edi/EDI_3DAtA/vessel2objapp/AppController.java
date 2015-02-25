@@ -130,12 +130,13 @@ public class AppController implements Initializable{
 		fileChooser.setTitle("Open CT Scan File");
 		File scanFile = fileChooser.showOpenDialog(mainStage);
 		if(scanFile==null){
+			System.out.println("ScanFile null");
 			((MenuItem)event.getSource()).getParentMenu().hide();
 			return;
 		}
 		try {
 			Main.selectedTomographyScan = new MetaImage(scanFile);
-			
+			Main.volumeVesselSegmentationData = null;
 			updateSelectedLayerIndex(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			
@@ -153,6 +154,7 @@ public class AppController implements Initializable{
 			File scanDir = Main.selectedTomographyScan.getElementHeaderFile().getParentFile().getParentFile();
 			File scanLungMask = new File(scanDir.toString()+"\\Lungmasks\\"+scanFile.getName());
 			Main.tomographyScanLungMasks = new MetaImage(scanLungMask);
+			
 			
 			
 		} catch (IOException e) {
