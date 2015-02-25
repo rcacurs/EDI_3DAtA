@@ -21,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
@@ -83,6 +84,8 @@ public class AppController implements Initializable{
 	private ProgressIndicator progressIndicatorSegmentation;
 	@FXML
 	private TextField textFieldSegmentationThreshold;
+	@FXML
+	private CheckBox cbShowSegmentation;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}
@@ -100,20 +103,24 @@ public class AppController implements Initializable{
 			index=0;
 		}
 		updateSelectedLayerIndex(index);
-		updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+		updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 		
 	}
 	@FXML 
 	public void onBtnNavigateLayerUp(){
 		int index = Integer.parseInt(textFieldSelectedLayerIdx.getText());
 		updateSelectedLayerIndex(index+1);
-		updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+		updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 	}
 	@FXML
 	public void onBtnNavigateLayerDown(){
 		int index = Integer.parseInt(textFieldSelectedLayerIdx.getText());
 		updateSelectedLayerIndex(index-1);
-		updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+		updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+	}
+	@FXML
+	public void onSegmentationThresholdChange(ActionEvent event){
+		updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 	}
 	@FXML
 	public void selectCTScanFile(ActionEvent event){
@@ -130,7 +137,7 @@ public class AppController implements Initializable{
 			Main.selectedTomographyScan = new MetaImage(scanFile);
 			
 			updateSelectedLayerIndex(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
-			updateSelectefLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+			updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 			
 			//update selected scan file field
 			fieldScanFilePath.setText(scanFile.toString());
@@ -225,10 +232,14 @@ public class AppController implements Initializable{
 			arg0.consume();
 		}
 	}
-	
+	// callback for check-box for blood vessel segmentation visualisation
 	@FXML
+	public void onCBShowSegmentation(ActionEvent event){
+		updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
+	}
+	
 	// calback for button that start blood vessel segmentation
-		
+	@FXML	
 	public void onButtonSegmentBloodVessels(ActionEvent event){
 		if(buttonSegmentBloodVessels.isSelected()){
 			if(Main.selectedTomographyScan==null){
@@ -304,8 +315,17 @@ public class AppController implements Initializable{
 			progressIndicatorSegmentation.progressProperty().bind(task.progressProperty());
 			 task.setOnSucceeded(e -> {
 				 	System.out.println("Tasks finished!");
+				 	updateSelectedLayerImage(Integer.parseInt(textFieldSelectedLayerIdx.getText()));
 				 	buttonSegmentBloodVessels.setSelected(false);
-					activeSegmentationTask=null;
+					//activeSegmentationTask=null;
+					
+			    });
+			 task.setOnCancelled(e -> {
+				 	progressIndicatorSegmentation.progressProperty().unbind();
+				 	progressIndicatorSegmentation.setProgress(0);
+				 	buttonSegmentBloodVessels.setSelected(false);
+					//activeSegmentationTask=null;
+					
 			    });
 			Thread thr = new Thread(task);
 			thr.setPriority(Thread.MAX_PRIORITY);
@@ -339,7 +359,7 @@ public class AppController implements Initializable{
 		};
 	}
 	// updates view with new image if file is opened
-	private void updateSelectefLayerImage(int layerIndex){
+	private void updateSelectedLayerImage(int layerIndex){
 		if(Main.selectedTomographyScan!=null){
 			Main.currentLayerImage=Main.selectedTomographyScan.getLayerImage(layerIndex);
 			BufferedImage bImage = ImageVisualization.convDenseMatrixToBufImage(Main.currentLayerImage);
@@ -349,7 +369,7 @@ public class AppController implements Initializable{
 			threshold = Double.parseDouble(textFieldSegmentationThreshold.getText());
 			if(threshold<0||threshold>1) threshold = 0.95;
 			
-			if((Main.volumeVesselSegmentationData!=null)&&(layerIndex>=Main.segmentatedDataRange[0])&&(layerIndex<=Main.segmentatedDataRange[1])){
+			if((cbShowSegmentation.isSelected())&&(Main.volumeVesselSegmentationData!=null)&&(layerIndex>=Main.segmentatedDataRange[0])&&(layerIndex<=Main.segmentatedDataRange[1])){
 				paintInVessels(image, Main.volumeVesselSegmentationData.getLayer(layerIndex-Main.segmentatedDataRange[0]), threshold);
 			}
 			ctScanImageView.setImage(image);

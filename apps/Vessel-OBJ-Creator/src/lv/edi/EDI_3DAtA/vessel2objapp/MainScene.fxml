@@ -223,7 +223,17 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="textFieldSegmentationThreshold" onKeyTyped="#filterThresholdSelectedTxtField" prefHeight="25.0" prefWidth="37.0" text="0.95" />
+                                    <TextField fx:id="textFieldSegmentationThreshold" onAction="#onSegmentationThresholdChange" onKeyTyped="#filterThresholdSelectedTxtField" prefHeight="25.0" prefWidth="37.0" text="0.95" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="302.0">
+                                 <children>
+                                    <Label prefHeight="40.0" prefWidth="172.0" text="Show Segmenation">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckBox fx:id="cbShowSegmentation" mnemonicParsing="false" onAction="#onCBShowSegmentation" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT">
