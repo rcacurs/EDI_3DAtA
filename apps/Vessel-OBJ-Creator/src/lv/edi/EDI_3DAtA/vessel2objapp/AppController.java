@@ -27,8 +27,10 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -287,13 +289,15 @@ public class AppController implements Initializable{
 						
 						layerVesselSegmentated = classifier.getResult();
 						segmentationDataLocal.addLayer(layerVesselSegmentated);
-						Main.volumeVesselSegmentationData=segmentationDataLocal;
+						
 						updateProgress(layer-layerRange[0]+1, (layerRange[1]-layerRange[0])+1);
 						layerFeatures=null;
 						layerMask=null;
 						layerImage=null;
 					}
-					
+					Main.volumeVesselSegmentationData=segmentationDataLocal;
+					segmentationDataLocal=null;
+					Main.segmentatedDataRange=layerRange;
 					return 100;
 				}
 			};
@@ -341,6 +345,13 @@ public class AppController implements Initializable{
 			BufferedImage bImage = ImageVisualization.convDenseMatrixToBufImage(Main.currentLayerImage);
 			WritableImage image = new WritableImage(bImage.getWidth(), bImage.getHeight());
 			SwingFXUtils.toFXImage(bImage, image);
+			double threshold = 0.95;
+			threshold = Double.parseDouble(textFieldSegmentationThreshold.getText());
+			if(threshold<0||threshold>1) threshold = 0.95;
+			
+			if((Main.volumeVesselSegmentationData!=null)&&(layerIndex>=Main.segmentatedDataRange[0])&&(layerIndex<=Main.segmentatedDataRange[1])){
+				paintInVessels(image, Main.volumeVesselSegmentationData.getLayer(layerIndex-Main.segmentatedDataRange[0]), threshold);
+			}
 			ctScanImageView.setImage(image);
 		}
 	}
@@ -377,5 +388,17 @@ public class AppController implements Initializable{
 
 		return range;
 	}
-	
+	// method for painting int segmentated blood vessels in image
+	private void paintInVessels(WritableImage image, DenseMatrix64F segmentationData, double threshold){
+		PixelWriter pWriter = image.getPixelWriter();
+		
+		for(int i=0; i<image.getHeight(); i++){
+			for(int j=0; j<image.getWidth(); j++){
+				if(segmentationData.get(i,j)>=threshold){
+					Color color = new Color(0,1,0,1);
+					pWriter.setColor(j, i, color);
+				}
+			}
+		}
+	}
 }

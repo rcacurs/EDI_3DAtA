@@ -15,6 +15,7 @@ public class Main extends Application {
 	static MetaImage selectedTomographyScan;
 	static MetaImage tomographyScanLungMasks;
 	static VolumetricData volumeVesselSegmentationData;
+	static int[] segmentatedDataRange = new int[2];
 	static int selectedLayer=100;
 	static DenseMatrix64F currentLayerImage;
 	
