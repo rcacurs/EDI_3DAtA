@@ -59,6 +59,26 @@ public class MarchingCubes {
 		}
 		return vertices;
 	}
+	/** method that reduces number of vertexes by removing vertexes with same coordinates
+	 *  this method changes input ArrayList of points. The index list for triangulation 
+	 *  of these points is returned by this function. Indexing is started from 1.
+	 *  @param inputVertexes array list of calculated vertexes
+	 *  @return index list for triangle faces
+	 */
+	public static ArrayList<Integer> removeDuplicatePoints(ArrayList<DenseMatrix64F> inputVertexes){
+		ArrayList<Integer> indexes = new ArrayList<Integer>(inputVertexes.size());
+		ArrayList<DenseMatrix64F> reducedVertexes = new ArrayList<DenseMatrix64F>(inputVertexes.size()/10);
+		reducedVertexes.add(inputVertexes.get(0));
+		indexes.add(1);
+		int lastOriginalIndex=1;
+		for(int i=1; i<inputVertexes.size(); i++){
+			for(int j=0; j<reducedVertexes.size(); j++){
+				if((reducedVertexes.get(j).data[0]==inputVertexes.get(i).data[0])&&
+					(reducedVertexes.get(j).data[1]==inputVertexes.get(i).data[1]))
+			}
+		}
+		return indexes;
+	}
 	
 	
 	/** saves ArrayList of vertices in .obj file
@@ -67,13 +87,15 @@ public class MarchingCubes {
 	 * @throws FileNotFoundException throws if file not found or cannot be created!
  	 */
 	public static void saveVerticesToObj(ArrayList<DenseMatrix64F> vertices, String filename) throws FileNotFoundException{
+		ArrayList<Integer> faceIndexes = removeDuplicatePoints(vertices);;
+		
 		PrintWriter writer = new PrintWriter(filename);
 		for(DenseMatrix64F item:vertices){
-			String vertexS = "v "+item.get(0)+" "+item.get(1)+" "+item.get(2);
+			String vertexS = String.format("v %f5.2 %f5.2 %f5.2", item.get(0), item.get(1), item.get(2));
 			writer.println(vertexS);
 		}
-		for(int i=0; i<vertices.size()/3; i++){
-			String indexS = "f " +(i*3+1)+" "+(i*3+2)+" "+(i*3+3);
+		for(int i=0; i<faceIndexes.size()/3; i++){
+			String indexS = String.format("f %d %d %d", faceIndexes.get(i*3), faceIndexes.get(i*3+1), faceIndexes.get(i*3+2));
 			writer.println(indexS);
 		}
 		writer.close();
