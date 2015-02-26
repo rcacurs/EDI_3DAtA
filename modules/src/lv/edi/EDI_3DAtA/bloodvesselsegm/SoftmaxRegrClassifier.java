@@ -1,6 +1,5 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
-import java.net.URL;
 
 import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 
