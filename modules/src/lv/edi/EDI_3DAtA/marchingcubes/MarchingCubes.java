@@ -71,12 +71,25 @@ public class MarchingCubes {
 		reducedVertexes.add(inputVertexes.get(0));
 		indexes.add(1);
 		int lastOriginalIndex=1;
+		boolean isOriginal=true;
 		for(int i=1; i<inputVertexes.size(); i++){
+			isOriginal=true;
+			System.out.println("Prcessing input vertex: "+i);
 			for(int j=0; j<reducedVertexes.size(); j++){
 				if((reducedVertexes.get(j).data[0]==inputVertexes.get(i).data[0])&&
-					(reducedVertexes.get(j).data[1]==inputVertexes.get(i).data[1]))
+					(reducedVertexes.get(j).data[1]==inputVertexes.get(i).data[1])&&
+					(reducedVertexes.get(j).data[2]==inputVertexes.get(i).data[2])){
+					isOriginal=false;
+					indexes.add(j+1);
+				} 
+			}
+			if(isOriginal){
+				lastOriginalIndex++;
+				indexes.add(lastOriginalIndex);
+				reducedVertexes.add(inputVertexes.get(i));
 			}
 		}
+		inputVertexes = reducedVertexes;
 		return indexes;
 	}
 	
@@ -87,11 +100,11 @@ public class MarchingCubes {
 	 * @throws FileNotFoundException throws if file not found or cannot be created!
  	 */
 	public static void saveVerticesToObj(ArrayList<DenseMatrix64F> vertices, String filename) throws FileNotFoundException{
-		ArrayList<Integer> faceIndexes = removeDuplicatePoints(vertices);;
+		//ArrayList<Integer> faceIndexes = removeDuplicatePoints(vertices);;
 		
 		PrintWriter writer = new PrintWriter(filename);
 		for(DenseMatrix64F item:vertices){
-			String vertexS = String.format("v %f5.2 %f5.2 %f5.2", item.get(0), item.get(1), item.get(2));
+			String vertexS = String.format("v %5.2f %5.2f %5.2f", item.get(0), item.get(1), item.get(2));
 			writer.println(vertexS);
 		}
 		for(int i=0; i<faceIndexes.size()/3; i++){
