@@ -107,8 +107,8 @@ public class MarchingCubes {
 			String vertexS = String.format("v %5.2f %5.2f %5.2f", item.get(0), item.get(1), item.get(2));
 			writer.println(vertexS);
 		}
-		for(int i=0; i<faceIndexes.size()/3; i++){
-			String indexS = String.format("f %d %d %d", faceIndexes.get(i*3), faceIndexes.get(i*3+1), faceIndexes.get(i*3+2));
+		for(int i=0; i<vertices.size()/3; i++){
+			String indexS = "f " +(i*3+1)+" "+(i*3+2)+" "+(i*3+3);
 			writer.println(indexS);
 		}
 		writer.close();
