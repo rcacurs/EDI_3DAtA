@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.concurrent.Task;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
@@ -95,7 +94,7 @@ public class MarchingCubes {
 						for(int ind=0; ind<currentVertexList.size(); ind++){
 							CommonOps.add(currentVertexList.get(ind), offset, currentVertexList.get(ind));
 						}
-						for(int z=0; i<currentVertexList.size(); i++){
+						for(int z=0; z<currentVertexList.size(); z++){
 							vertices.add((float) currentVertexList.get(z).get(0));
 							vertices.add((float) currentVertexList.get(z).get(1));
 							vertices.add((float) currentVertexList.get(z).get(2));
@@ -109,6 +108,8 @@ public class MarchingCubes {
 			}
 		}
 		progress.set(1);
+		System.out.println("Vertices size: "+vertices.size());
+		System.out.println("Faces size: "+facesal.size());
 		float[] points = new float[vertices.size()];
 		for(int i=0; i<vertices.size(); i++){
 			points[i]=vertices.get(i);
