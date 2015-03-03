@@ -18,6 +18,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.AmbientLight;
+import javafx.scene.Group;
+import javafx.scene.SceneAntialiasing;
+import javafx.scene.SubScene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -25,13 +29,21 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.DrawMode;
+import javafx.scene.shape.MeshView;
+import javafx.scene.shape.TriangleMesh;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -86,8 +98,58 @@ public class AppController implements Initializable{
 	private TextField textFieldSegmentationThreshold;
 	@FXML
 	private CheckBox cbShowSegmentation;
+	@FXML
+	private ToggleButton buttonGenerate3D;
+	@FXML
+	private ProgressIndicator progressIndicator3D;
+	@FXML
+	private Group group3D;
+	@FXML
+	private VBox box3DLayout;
+	@FXML
+	private Tab tab3D;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		Box box = new Box(5, 5, 5);
+		box.setMaterial(new PhongMaterial(Color.RED));
+		box.setCullFace(CullFace.NONE);
+		Group root = new Group();
+		Main.bloodVessel3DView = new MeshView();
+		float[] points = {10, 10, 10,
+				  20, 10, 10, 
+				  15, 20, 10};
+		float[] texCoords = {0, 0};
+		int[] faces = {0, 0, 1, 0, 2, 0};
+		
+		Main.trMesh = new TriangleMesh();
+//		trMesh2.getPoints().setAll(points);
+//		trMesh2.getTexCoords().setAll(texCoords);
+//		trMesh2.getFaces().setAll(faces);
+		
+		
+		
+		//Main.bloodVessel3DView.setMesh(trMesh2);
+		Main.bloodVessel3DView.setCullFace(CullFace.NONE);
+		Main.bloodVessel3DView.setDrawMode(DrawMode.FILL);
+		Main.bloodVessel3DView.setMaterial(new PhongMaterial(Color.RED));
+		AmbientLight ambLight = new AmbientLight();
+		root.getChildren().add(Main.bloodVessel3DView);
+		root.getChildren().add(ambLight);
+		System.out.println("box size"+box3DLayout.getHeight()+box3DLayout.getWidth());
+		SubScene subScene = new SubScene(root, box3DLayout.getHeight(), box3DLayout.getWidth(), true, SceneAntialiasing.BALANCED);
+		subScene.heightProperty().bind(box3DLayout.heightProperty());
+		subScene.widthProperty().bind(box3DLayout.widthProperty());
+		
+		group3D.getChildren().add(subScene);
+		
+		float[] points2 = {10, 20, 10,
+				  15, 10, 10,
+				  20, 20, 10};
+		Main.trMesh.getPoints().setAll(points2);
+		Main.trMesh.getTexCoords().setAll(texCoords);
+		Main.trMesh.getFaces().setAll(faces);
+		Main.bloodVessel3DView.setMesh(Main.trMesh);
 	}
 	public void setMainStage(Stage stage){
 		this.mainStage = stage;
@@ -156,7 +218,6 @@ public class AppController implements Initializable{
 			Main.tomographyScanLungMasks = new MetaImage(scanLungMask);
 			
 			
-			
 		} catch (IOException e) {
 			System.out.println("Problem Loadin Specified File");
 		}
@@ -200,22 +261,22 @@ public class AppController implements Initializable{
 		alert.show();
 		
 		MarchingCubes mc = new MarchingCubes(Main.volumeVesselSegmentationData);
-		ArrayList<DenseMatrix64F> vessel3DVertexes = mc.generateIsoSurface(threshold);
+		//ArrayList<DenseMatrix64F> vessel3DVertexes = mc.generateIsoSurface(threshold);
 		
-		try {
-			Date date = new Date();
-			GregorianCalendar cal = new GregorianCalendar();
-			cal.setTime(date);
-			MarchingCubes.saveVerticesToObj(vessel3DVertexes, exportDir.toString()+"/blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
-																						   +(cal.get(Calendar.MONTH)+1)+""
-																						   +(cal.get(Calendar.YEAR))+""
-																						   +(cal.get(Calendar.HOUR))+""+
-																						   +(cal.get(Calendar.MINUTE))+".obj");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		vessel3DVertexes = null;
+//		try {
+//			Date date = new Date();
+//			GregorianCalendar cal = new GregorianCalendar();
+//			cal.setTime(date);
+//			//MarchingCubes.saveVerticesToObj(vessel3DVertexes, exportDir.toString()+"/blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
+////																						   +(cal.get(Calendar.MONTH)+1)+""
+////																						   +(cal.get(Calendar.YEAR))+""
+////																						   +(cal.get(Calendar.HOUR))+""+
+////																						   +(cal.get(Calendar.MINUTE))+".obj");
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+////		vessel3DVertexes = null;
 		alert.close();
 	}
 	@FXML
@@ -341,6 +402,100 @@ public class AppController implements Initializable{
 			}
 		}
 		
+	}
+	
+	@FXML
+	public void onButtonGenerate3D(ActionEvent event){
+		if(buttonGenerate3D.isSelected()){
+			if(Main.volumeVesselSegmentationData!=null){
+				
+				// run background task
+				// Vessel segmentation TASK
+				double threshold;
+				try{
+					threshold = Double.parseDouble(textFieldSegmentationThreshold.getText());
+				}catch(NumberFormatException ex){
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText("Specified threshold value wrong");
+					alert.setContentText("Please check entered threshold value and ensure it is in range from 0.0 to 1.0!");
+					alert.showAndWait();
+					return;
+				}
+				if(threshold>1){
+					threshold = 1;
+				}
+				Task<Integer> task = new Task<Integer>(){
+				
+				@Override
+					protected Integer call(){
+						System.out.println("Task start");
+						double threshold;
+						try{
+							threshold = Double.parseDouble(textFieldSegmentationThreshold.getText());
+						}catch(NumberFormatException ex){
+							Alert alert = new Alert(AlertType.ERROR);
+							alert.setTitle("Error");
+							alert.setHeaderText("Specified threshold value wrong");
+							alert.setContentText("Please check entered threshold value and ensure it is in range from 0.0 to 1.0!");
+							alert.showAndWait();
+							return 0;
+						}
+						if(threshold>1){
+							threshold = 1;
+						}
+						MarchingCubes mc = new MarchingCubes(Main.volumeVesselSegmentationData);
+						mc.getProgressProperty().addListener((obs, oldProgress, newProgress) ->{
+					    	updateProgress((double)newProgress, 1.0);
+					    	System.out.println("Update Progress!");
+					    	}
+					    );
+						
+						Main.trMeshData = mc.generateIsoSurface(threshold);
+						System.out.println("Surface generated!");
+						return 100;
+					}
+				};
+				progressIndicator3D.progressProperty().bind(task.progressProperty());
+				 task.setOnSucceeded(e -> {
+					 	System.out.println("Tasks finished, Succeeded!");
+					 	buttonGenerate3D.setSelected(false);
+						
+					 	System.out.println("vert"+Main.trMeshData.vertices+" tex: "+Main.trMeshData.texCoords+" faces: "+Main.trMeshData.faces);
+					 	System.out.println("Num vertices: "+Main.trMeshData.vertices.length+" Num tex:"+Main.trMeshData.texCoords.length+" numfaces: "+Main.trMeshData.faces.length);
+						Main.trMesh.getPoints().setAll(Main.trMeshData.vertices);
+						Main.trMesh.getTexCoords().setAll(Main.trMeshData.texCoords);
+						Main.trMesh.getFaces().setAll(Main.trMeshData.faces);
+				
+						Main.bloodVessel3DView.setMesh(Main.trMesh);
+						Main.bloodVessel3DView.setMaterial(new PhongMaterial(Color.RED));
+						Main.bloodVessel3DView.setDrawMode(DrawMode.FILL);
+						Main.bloodVessel3DView.setCullFace(CullFace.NONE);
+						System.out.println("Surface changed");
+						
+				    });
+				 task.setOnCancelled(e -> {
+					 	progressIndicator3D.progressProperty().unbind();
+					 	progressIndicator3D.setProgress(0);
+					 	buttonGenerate3D.setSelected(false);
+						//activeSegmentationTask=null;
+						
+				    });
+				Thread thr = new Thread(task);
+				thr.setPriority(Thread.MAX_PRIORITY);
+				thr.start();
+				activeSegmentationTask = task;
+			} else{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText("Blood vessel segmentation data no avialable!");
+				alert.setContentText("Please run blood vessel segmentation first!");
+				alert.showAndWait();
+				buttonGenerate3D.setSelected(false);
+			}
+		} else{
+			
+		}
 	}
 	
 	// HELPER FUNCTIONS

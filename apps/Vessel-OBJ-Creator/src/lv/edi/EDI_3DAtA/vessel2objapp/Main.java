@@ -7,8 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.shape.MeshView;
+import javafx.scene.shape.TriangleMesh;
 import lv.edi.EDI_3DAtA.common.VolumetricData;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
+import lv.edi.EDI_3DAtA.marchingcubes.TriangleMeshData;
 
 
 public class Main extends Application {
@@ -18,7 +21,9 @@ public class Main extends Application {
 	static int[] segmentatedDataRange = new int[2];
 	static int selectedLayer=100;
 	static DenseMatrix64F currentLayerImage;
-	
+	static TriangleMeshData trMeshData;
+	static MeshView bloodVessel3DView;
+	static TriangleMesh trMesh;
 	@Override
 	public void start(Stage primaryStage) {
 		try {
