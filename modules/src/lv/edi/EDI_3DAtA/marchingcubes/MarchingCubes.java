@@ -77,6 +77,9 @@ public class MarchingCubes {
 		
 		DenseMatrix64F offset = new DenseMatrix64F(3,1);
 		CubeMC cube = new CubeMC();
+		float xSum=0;
+		float ySum=0;
+		float zSum=0;
 		if(data.size()!=0){
 			int maxX = data.getLayer(0).numCols;
 			int maxY = data.getLayer(0).numRows;
@@ -96,8 +99,11 @@ public class MarchingCubes {
 						}
 						for(int z=0; z<currentVertexList.size(); z++){
 							vertices.add((float) currentVertexList.get(z).get(0));
+							xSum=xSum+(float) currentVertexList.get(z).get(0);
 							vertices.add((float) currentVertexList.get(z).get(1));
+							ySum=ySum+(float) currentVertexList.get(z).get(1);
 							vertices.add((float) currentVertexList.get(z).get(2));
+							zSum=zSum+(float) currentVertexList.get(z).get(2);
 							facesal.add(indexCounter);
 							facesal.add(0); // add texture index as zero because tecture is not used
 							indexCounter++;
@@ -119,7 +125,11 @@ public class MarchingCubes {
 			faces[i]=facesal.get(i);
 		}
 		float[] texCoords = new float[2];
-		return new TriangleMeshData(points, texCoords, faces);
+		float[] center = new float[3];
+		center[0]=xSum/vertices.size();
+		center[1]=ySum/vertices.size();
+		center[2]=zSum/vertices.size();
+		return new TriangleMeshData(points, texCoords, faces, center);
 			
 	}
 	/** method that reduces number of vertexes by removing vertexes with same coordinates

@@ -5,6 +5,7 @@ import org.ejml.data.DenseMatrix64F;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.shape.MeshView;
@@ -24,6 +25,11 @@ public class Main extends Application {
 	static TriangleMeshData trMeshData;
 	static MeshView bloodVessel3DView;
 	static TriangleMesh trMesh;
+	static Camera camera3D;
+	static float cameraRotAngleY=0;
+	static float cameraRotAngleX=0;
+	static float translateZ=-1000;
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
