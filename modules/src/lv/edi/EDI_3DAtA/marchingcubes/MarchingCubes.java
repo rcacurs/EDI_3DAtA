@@ -139,8 +139,6 @@ public class MarchingCubes {
 			}
 		}
 		progress.set(1);
-		System.out.println("Vertices size: "+vertices.size());
-		System.out.println("Faces size: "+facesal.size());
 		float[] points = new float[vertices.size()];
 		for(int i=0; i<vertices.size(); i++){
 			points[i]=vertices.get(i);

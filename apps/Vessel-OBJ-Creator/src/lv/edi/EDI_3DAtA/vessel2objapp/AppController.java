@@ -2,10 +2,8 @@ package lv.edi.EDI_3DAtA.vessel2objapp;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -19,7 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.AmbientLight;
-import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
@@ -44,7 +41,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.CullFace;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
@@ -126,20 +122,9 @@ public class AppController implements Initializable{
 
 		Group root = new Group();
 		Main.bloodVessel3DView = new MeshView();
-//		float[] points = {10, 10, 10,
-//				  		  20, 10, 10, 
-//				  		  15, 20, 10};
-//		float[] texCoords = {0, 0};
-//		int[] faces = {0, 0, 1, 0, 2, 0};
 		
 		Main.trMesh = new TriangleMesh();
-//		trMesh2.getPoints().setAll(points);
-//		trMesh2.getTexCoords().setAll(texCoords);
-//		trMesh2.getFaces().setAll(faces);
-		
-		
-		
-		//Main.bloodVessel3DView.setMesh(trMesh2);
+
 		Main.bloodVessel3DView.setCullFace(CullFace.NONE);
 		Main.bloodVessel3DView.setDrawMode(DrawMode.FILL);
 		Main.bloodVessel3DView.setMaterial(new PhongMaterial(Color.RED));
@@ -153,7 +138,6 @@ public class AppController implements Initializable{
 		root.getChildren().add(ambLight);
 		root.getChildren().add(pointLight);
 		
-		System.out.println("box size"+box3DLayout.getHeight()+box3DLayout.getWidth());
 		SubScene subScene = new SubScene(root, box3DLayout.getHeight(), box3DLayout.getWidth(), true, SceneAntialiasing.BALANCED);
 		subScene.setCamera(Main.camera3D);
 		root.getChildren().add(Main.camera3D);
@@ -161,20 +145,11 @@ public class AppController implements Initializable{
 		Main.camera3D.getTransforms().addAll(new Rotate(0, Rotate.Z_AXIS), new Rotate(0, Rotate.X_AXIS),
                 new Translate(0, 0, Main.translateZ));
 		
-
-		//camera.getTransforms().setAll(new Rotate(1, Rotate.Z_AXIS));
 		subScene.heightProperty().bind(box3DLayout.heightProperty());
 		subScene.widthProperty().bind(box3DLayout.widthProperty());
 		
 		group3D.getChildren().add(subScene);
 		
-//		float[] points2 = {-10, 10, 0,
-//				  0, -10, 0,
-//				  10, 10, 0};
-//		Main.trMesh.getPoints().setAll(points2);
-//		Main.trMesh.getTexCoords().setAll(texCoords);
-//		Main.trMesh.getFaces().setAll(faces);
-//		Main.bloodVessel3DView.setMesh(Main.trMesh);
 	}
 	public void setMainStage(Stage stage){
 		this.mainStage = stage;
@@ -468,10 +443,9 @@ public class AppController implements Initializable{
 						MarchingCubes mc = new MarchingCubes(Main.volumeVesselSegmentationData);
 						mc.getProgressProperty().addListener((obs, oldProgress, newProgress) ->{
 					    	updateProgress((double)newProgress, 1.0);
-					    	System.out.println("Update Progress!");
 					    	}
 					    );
-						
+						Main.trMeshData = null;
 						Main.trMeshData = mc.generateIsoSurface(threshold);
 						System.out.println("Surface generated!");
 						return 100;
@@ -493,7 +467,6 @@ public class AppController implements Initializable{
 						Main.bloodVessel3DView.setDrawMode(DrawMode.FILL);
 						Main.bloodVessel3DView.setCullFace(CullFace.NONE);
 						Main.bloodVessel3DView.getTransforms().setAll(new Translate(-Main.trMeshData.center[0], -Main.trMeshData.center[1], -Main.trMeshData.center[2]));
-						System.out.println("Surface changed");
 						
 				    });
 				 task.setOnCancelled(e -> {
@@ -526,12 +499,10 @@ public class AppController implements Initializable{
 		double difX=previousX-currentX;
 		double difY=previousY-currentY;
 		
-		System.out.println("Drag event!");
 		Main.cameraRotAngleZ+=-difX*rotationSensitivity;
 		Main.cameraRotAngleX+=difY*rotationSensitivity;
         Main.camera3D.getTransforms().set(0, new Rotate(Main.cameraRotAngleZ, Rotate.Z_AXIS));
         Main.camera3D.getTransforms().set(1, new Rotate(Main.cameraRotAngleX, Rotate.X_AXIS));
-        System.out.println(Main.camera3D.getTransforms().size());
         previousX=currentX;
         previousY=currentY;
         }
@@ -550,7 +521,6 @@ public class AppController implements Initializable{
 			Main.translateZ-=10;
 		}
 		Main.camera3D.getTransforms().set(2, new Translate(0, 0, Main.translateZ));
-		System.out.println("Scrolling! "+event.getDeltaY());
 	}
 	
 	// HELPER FUNCTIONS
