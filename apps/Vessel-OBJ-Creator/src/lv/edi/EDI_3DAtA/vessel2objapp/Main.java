@@ -26,7 +26,7 @@ public class Main extends Application {
 	static MeshView bloodVessel3DView;
 	static TriangleMesh trMesh;
 	static Camera camera3D;
-	static float cameraRotAngleY=0;
+	static float cameraRotAngleZ=0;
 	static float cameraRotAngleX=0;
 	static float translateZ=-1000;
 

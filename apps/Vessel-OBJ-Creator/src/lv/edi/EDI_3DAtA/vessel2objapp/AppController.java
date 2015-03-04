@@ -22,6 +22,7 @@ import javafx.scene.AmbientLight;
 import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Alert;
@@ -122,16 +123,14 @@ public class AppController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
-		Box box = new Box(5, 5, 5);
-		box.setMaterial(new PhongMaterial(Color.RED));
-		box.setCullFace(CullFace.NONE);
+
 		Group root = new Group();
 		Main.bloodVessel3DView = new MeshView();
-		float[] points = {10, 10, 10,
-				  		  20, 10, 10, 
-				  		  15, 20, 10};
-		float[] texCoords = {0, 0};
-		int[] faces = {0, 0, 1, 0, 2, 0};
+//		float[] points = {10, 10, 10,
+//				  		  20, 10, 10, 
+//				  		  15, 20, 10};
+//		float[] texCoords = {0, 0};
+//		int[] faces = {0, 0, 1, 0, 2, 0};
 		
 		Main.trMesh = new TriangleMesh();
 //		trMesh2.getPoints().setAll(points);
@@ -145,16 +144,21 @@ public class AppController implements Initializable{
 		Main.bloodVessel3DView.setDrawMode(DrawMode.FILL);
 		Main.bloodVessel3DView.setMaterial(new PhongMaterial(Color.RED));
 		AmbientLight ambLight = new AmbientLight();
+		ambLight.setColor(Color.rgb(100, 100, 100));
+		PointLight pointLight = new PointLight(Color.WHITE);
+		pointLight.getTransforms().add(new Translate(0, 100, 100));
 		Main.camera3D = new PerspectiveCamera(true);
 		Main.camera3D.setFarClip(5000);
 		root.getChildren().add(Main.bloodVessel3DView);
 		root.getChildren().add(ambLight);
+		root.getChildren().add(pointLight);
+		
 		System.out.println("box size"+box3DLayout.getHeight()+box3DLayout.getWidth());
 		SubScene subScene = new SubScene(root, box3DLayout.getHeight(), box3DLayout.getWidth(), true, SceneAntialiasing.BALANCED);
 		subScene.setCamera(Main.camera3D);
 		root.getChildren().add(Main.camera3D);
 		
-		Main.camera3D.getTransforms().addAll(new Rotate(0, Rotate.Y_AXIS), new Rotate(0, Rotate.X_AXIS),
+		Main.camera3D.getTransforms().addAll(new Rotate(0, Rotate.Z_AXIS), new Rotate(0, Rotate.X_AXIS),
                 new Translate(0, 0, Main.translateZ));
 		
 
@@ -162,17 +166,15 @@ public class AppController implements Initializable{
 		subScene.heightProperty().bind(box3DLayout.heightProperty());
 		subScene.widthProperty().bind(box3DLayout.widthProperty());
 		
-		
-		
 		group3D.getChildren().add(subScene);
 		
-		float[] points2 = {-10, 10, 0,
-				  0, -10, 0,
-				  10, 10, 0};
-		Main.trMesh.getPoints().setAll(points2);
-		Main.trMesh.getTexCoords().setAll(texCoords);
-		Main.trMesh.getFaces().setAll(faces);
-		Main.bloodVessel3DView.setMesh(Main.trMesh);
+//		float[] points2 = {-10, 10, 0,
+//				  0, -10, 0,
+//				  10, 10, 0};
+//		Main.trMesh.getPoints().setAll(points2);
+//		Main.trMesh.getTexCoords().setAll(texCoords);
+//		Main.trMesh.getFaces().setAll(faces);
+//		Main.bloodVessel3DView.setMesh(Main.trMesh);
 	}
 	public void setMainStage(Stage stage){
 		this.mainStage = stage;
@@ -494,7 +496,7 @@ public class AppController implements Initializable{
 						Main.bloodVessel3DView.setMaterial(new PhongMaterial(Color.RED));
 						Main.bloodVessel3DView.setDrawMode(DrawMode.FILL);
 						Main.bloodVessel3DView.setCullFace(CullFace.NONE);
-						Main.bloodVessel3DView.getTransforms().add(new Translate(-Main.trMeshData.center[0], -Main.trMeshData.center[1], -Main.trMeshData.center[2]));
+						Main.bloodVessel3DView.getTransforms().setAll(new Translate(-Main.trMeshData.center[0], -Main.trMeshData.center[1], -Main.trMeshData.center[2]));
 						System.out.println("Surface changed");
 						
 				    });
@@ -529,9 +531,9 @@ public class AppController implements Initializable{
 		double difY=previousY-currentY;
 		
 		System.out.println("Drag event!");
-		Main.cameraRotAngleY+=difX*rotationSensitivity;
+		Main.cameraRotAngleZ+=-difX*rotationSensitivity;
 		Main.cameraRotAngleX+=difY*rotationSensitivity;
-        Main.camera3D.getTransforms().set(0, new Rotate(Main.cameraRotAngleY, Rotate.Y_AXIS));
+        Main.camera3D.getTransforms().set(0, new Rotate(Main.cameraRotAngleZ, Rotate.Z_AXIS));
         Main.camera3D.getTransforms().set(1, new Rotate(Main.cameraRotAngleX, Rotate.X_AXIS));
         System.out.println(Main.camera3D.getTransforms().size());
         previousX=currentX;

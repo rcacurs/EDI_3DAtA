@@ -77,9 +77,15 @@ public class MarchingCubes {
 		
 		DenseMatrix64F offset = new DenseMatrix64F(3,1);
 		CubeMC cube = new CubeMC();
-		float xSum=0;
-		float ySum=0;
-		float zSum=0;
+		float xMax=Float.MIN_VALUE;;
+		float yMax=Float.MIN_VALUE;;
+		float zMax=Float.MIN_VALUE;
+		float xMin=Float.MAX_VALUE;
+		float yMin=Float.MAX_VALUE;
+		float zMin=Float.MAX_VALUE;
+		float tempx;
+		float tempy;
+		float tempz;
 		if(data.size()!=0){
 			int maxX = data.getLayer(0).numCols;
 			int maxY = data.getLayer(0).numRows;
@@ -98,15 +104,34 @@ public class MarchingCubes {
 							CommonOps.add(currentVertexList.get(ind), offset, currentVertexList.get(ind));
 						}
 						for(int z=0; z<currentVertexList.size(); z++){
-							vertices.add((float) currentVertexList.get(z).get(0));
-							xSum=xSum+(float) currentVertexList.get(z).get(0);
-							vertices.add((float) currentVertexList.get(z).get(1));
-							ySum=ySum+(float) currentVertexList.get(z).get(1);
-							vertices.add((float) currentVertexList.get(z).get(2));
-							zSum=zSum+(float) currentVertexList.get(z).get(2);
+							tempx=(float) currentVertexList.get(z).get(0);
+							tempy=(float) currentVertexList.get(z).get(1);
+							tempz=(float) currentVertexList.get(z).get(2);
+							vertices.add(tempx);
+							vertices.add(tempy);
+							vertices.add(tempz);
 							facesal.add(indexCounter);
-							facesal.add(0); // add texture index as zero because tecture is not used
+							facesal.add(0); // add texture index as zero because texture is not used
 							indexCounter++;
+							
+							if(tempx>xMax){
+								xMax=tempx;
+							}
+							if(tempx<xMin){
+								xMin=tempx;
+							}
+							if(tempy>yMax){
+								yMax=tempy;
+							}
+							if(tempy<yMin){
+								yMin=tempy;
+							}
+							if(tempz>zMax){
+								zMax=tempz;
+							}
+							if(tempz<zMin){
+								zMin=tempz;
+							}
 						}
 						
 					}
@@ -126,9 +151,9 @@ public class MarchingCubes {
 		}
 		float[] texCoords = new float[2];
 		float[] center = new float[3];
-		center[0]=xSum/vertices.size();
-		center[1]=ySum/vertices.size();
-		center[2]=zSum/vertices.size();
+		center[0]=(xMax+xMin)/2;
+		center[1]=(yMax+yMin)/2;
+		center[2]=(zMax+zMin)/2;
 		return new TriangleMeshData(points, texCoords, faces, center);
 			
 	}
