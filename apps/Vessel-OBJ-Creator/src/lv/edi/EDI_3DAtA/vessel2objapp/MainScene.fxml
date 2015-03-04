@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="807.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lv.edi.EDI_3DAtA.vessel2objapp.AppController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="729.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lv.edi.EDI_3DAtA.vessel2objapp.AppController">
    <children>
-      <VBox AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox prefHeight="724.0" prefWidth="1090.0" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <MenuBar prefHeight="25.0" prefWidth="1036.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <menus>
@@ -30,24 +30,24 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <AnchorPane>
+            <AnchorPane prefHeight="733.0" prefWidth="1090.0">
                <children>
-                  <HBox prefHeight="779.0" prefWidth="1090.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox prefHeight="704.0" prefWidth="1090.0" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane prefHeight="779.0" prefWidth="641.0">
+                        <AnchorPane prefHeight="695.0" prefWidth="782.0">
                            <children>
-                              <TabPane prefHeight="779.0" prefWidth="782.0">
+                              <TabPane prefHeight="701.0" prefWidth="782.0">
                                  <tabs>
                                     <Tab closable="false" text="2D View">
                                        <content>
-                                          <VBox alignment="CENTER" prefHeight="779.0" prefWidth="782.0" HBox.hgrow="ALWAYS">
+                                          <VBox alignment="CENTER" prefHeight="687.0" prefWidth="782.0" HBox.hgrow="ALWAYS">
                                              <children>
-                                                <ImageView fx:id="ctScanImageView" fitHeight="625.0" fitWidth="701.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <ImageView fx:id="ctScanImageView" fitHeight="552.0" fitWidth="701.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <VBox.margin>
                                                       <Insets left="30.0" right="30.0" top="30.0" />
                                                    </VBox.margin>
                                                 </ImageView>
-                                                <HBox alignment="CENTER" prefHeight="188.0" prefWidth="782.0">
+                                                <HBox alignment="CENTER" prefHeight="84.0" prefWidth="782.0">
                                                    <children>
                                                       <Button fx:id="btnNavigateLayersDown" mnemonicParsing="false" onAction="#onBtnNavigateLayerDown" text="&lt;">
                                                          <HBox.margin>
