@@ -279,30 +279,26 @@ public class AppController implements Initializable{
 		if(exportDir==null){
 			return;
 		}
+		
+		Date date = new Date();
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		String fileName = exportDir.toString()+"/blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
+				   +(cal.get(Calendar.MONTH)+1)+""
+				   +(cal.get(Calendar.YEAR))+""
+				   +(cal.get(Calendar.HOUR))+""+
+				   +(cal.get(Calendar.MINUTE))+".obj";
+		try {
+			Main.trMeshData.saveAsObj(fileName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Exporting to .obj");
+		alert.setTitle("File sucesfully created!");
 		alert.setHeaderText(null);
-		alert.setContentText("Exporting to .obj file...");
-		alert.show();
-		
-		MarchingCubes mc = new MarchingCubes(Main.volumeVesselSegmentationData);
-		//ArrayList<DenseMatrix64F> vessel3DVertexes = mc.generateIsoSurface(threshold);
-		
-//		try {
-//			Date date = new Date();
-//			GregorianCalendar cal = new GregorianCalendar();
-//			cal.setTime(date);
-//			//MarchingCubes.saveVerticesToObj(vessel3DVertexes, exportDir.toString()+"/blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
-////																						   +(cal.get(Calendar.MONTH)+1)+""
-////																						   +(cal.get(Calendar.YEAR))+""
-////																						   +(cal.get(Calendar.HOUR))+""+
-////																						   +(cal.get(Calendar.MINUTE))+".obj");
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-////		vessel3DVertexes = null;
-		alert.close();
+		alert.setContentText("3D Model exported as file - "+fileName);
+		alert.showAndWait();
 	}
 	@FXML
 	public void filterLayerSelecteTxtField(KeyEvent arg0){
