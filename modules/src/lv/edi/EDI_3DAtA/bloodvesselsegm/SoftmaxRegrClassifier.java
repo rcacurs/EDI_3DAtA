@@ -1,8 +1,5 @@
 package lv.edi.EDI_3DAtA.bloodvesselsegm;
 
-
-import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
-
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
