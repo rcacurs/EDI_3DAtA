@@ -193,7 +193,7 @@ void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & co
 		filteredLayer.download(filteredLayerMat);
 		ticki2 = getCPUTickCount();
 
-		cout << "C++ one scale filter time " << (ticki2 - ticki1) / getTickFrequency() << endl;
+		//cout << "C++ one scale filter time " << (ticki2 - ticki1) / getTickFrequency() << endl;
 		for (int j = 0; j < filteredLayer.cols; j++){
 			temp1 = filteredLayerMat.col(j).clone();
 			
@@ -210,13 +210,9 @@ void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & co
 			upscaledImage.download(temp1);
 			
 			ticki1 = getCPUTickCount();
-			//float * p = (float *)(features.ptr(featureCount));
-			//for (int z = 0; z < temp1.total(); z++){
-			//	p[z] = temp1.at<float>(z/input.cols, z%input.cols);
-			//}
 			features.push_back(temp1.reshape(1, 1));
 			ticki2 = getCPUTickCount();
-			cout << "C++ one feature copy time: " << (ticki2 - ticki1) / getTickFrequency() << endl;
+			//cout << "C++ one feature copy time: " << (ticki2 - ticki1) / getTickFrequency() << endl;
 			featureCount++;
 			oneFilter.release();
 			temp1.release();
@@ -261,11 +257,11 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 	inputImageG.upload(inputImage);
 	GpuMat features;
 	tick2 = getCPUTickCount();
-	cout << "C++ data preperation time: " << (tick2-tick1)/getTickFrequency()<<endl;
+	//cout << "C++ data preperation time: " << (tick2-tick1)/getTickFrequency()<<endl;
 	tick1 = getCPUTickCount();
 	extractFeatures(inputImageG, features, 5, codesG, meansG);
 	tick2 = getCPUTickCount();
-	cout << "C++ feature extractor time: " << (tick2 - tick1) / getTickFrequency() << endl;
+	//cout << "C++ feature extractor time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	
 	tick1 = getCPUTickCount();
 	GpuMat feature = features(Range(32, 33), Range(0, features.cols));
