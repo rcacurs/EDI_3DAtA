@@ -156,8 +156,7 @@ public class LayerSMFeatures {
 	public DenseMatrix64F getFeature(int featureIndex){
 		DenseMatrix64F feature = new DenseMatrix64F(numRows, numCols);
 
-		System.arraycopy(features.data, featureIndex*numCols, feature.data, 0, numCols);
-		feature.data=features.data;
+		System.arraycopy(features.data, featureIndex*features.numCols, feature.data, 0, features.numCols);
 		return feature;
 	}
 	
