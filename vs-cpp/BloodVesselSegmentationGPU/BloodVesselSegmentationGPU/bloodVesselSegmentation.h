@@ -25,9 +25,7 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
  * Signature: ([DII)[D
  */
 JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Compute_segmentBloodVessels
-(JNIEnv * env, jobject obj, jdoubleArray input, jint rows, jint cols, jdoubleArray codes, jdoubleArray means, jint patchSize, jint numberOfFilters);
-
-
+(JNIEnv * env, jobject obj, jdoubleArray input, jint rows, jint cols, jdoubleArray codes, jdoubleArray means, jint patchSize, jint numberOfFilters, jdoubleArray model, jdoubleArray scaleparamsMean, jdoubleArray scaleparamsSd, jdoubleArray imageMask);
 
 
 }

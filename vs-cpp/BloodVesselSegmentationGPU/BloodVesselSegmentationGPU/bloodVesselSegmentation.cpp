@@ -221,15 +221,62 @@ void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & co
 			tempT.release();
 		}
 	}
+	features.push_back(Mat(1, features.cols, CV_32FC1, 1));
 	output.upload(features);
 }
 
-JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Compute_segmentBloodVessels(JNIEnv * env, jobject obj, jdoubleArray input, jint rows, jint cols, jdoubleArray codes, jdoubleArray means, jint patchSize, jint numberOfFilters){
+void classify(GpuMat & inputFeatures, GpuMat & output, GpuMat & maskImage, GpuMat & model, Mat & mean, Mat & Sd){
+	//masking image
+	GpuMat submat;
+	cout << "C++ masking image" << endl;
+	for (int i = 0; i < inputFeatures.rows-1; i++){
+		submat = inputFeatures(Range(i, i + 1), Range(0, inputFeatures.cols));
+		cuda::multiply(submat, maskImage, submat);
+	}
+	cout << "C++ Feature normalisation" << endl;
+	// feature normalisation
+	for (int i = 0; i < inputFeatures.rows-1; i++){
+		submat = inputFeatures(Range(i, i + 1), Range(0, inputFeatures.cols));
+		cuda::subtract(submat, ((float *)mean.data)[i], submat);
+		cuda::divide(submat, ((float *)Sd.data)[i], submat);
+	}
+	GpuMat featuresNorm, dummy;
+	cout << "C++ moedl coef and feature multiplication: " << endl;
+
+	cuda::gemm(model, inputFeatures, 1, dummy, 0, featuresNorm);
+	// find maximum values of featuresNorm
+	GpuMat maxVec;
+	cout << "C++ finding max values: " << endl;
+	cuda::reduce(featuresNorm, maxVec, 0, REDUCE_MAX);
+
+	cout << "C++ reducing max values: " << endl;
+	for (int i = 0; i < featuresNorm.rows; i++){
+		submat = featuresNorm(Range(i, i + 1), Range(0, featuresNorm.cols));
+		cuda::subtract(submat, maxVec, submat);
+	}
+	cout << "C++ computing exponents " << endl;
+	cuda::exp(featuresNorm, featuresNorm);
+	GpuMat sumVec;
+	cuda::reduce(featuresNorm, sumVec, 0, REDUCE_SUM);
+	submat = featuresNorm(Range(1, 2), Range(0, featuresNorm.cols));
+	GpuMat result;
+	cuda::divide(submat, sumVec, output);
+}
+
+JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Compute_segmentBloodVessels(JNIEnv * env, jobject obj, jdoubleArray input, jint rows, jint cols, jdoubleArray codes, jdoubleArray means, jint patchSize, jint numberOfFilters, jdoubleArray model, jdoubleArray scaleparamsMean, jdoubleArray scaleparamsSd, jdoubleArray imageMask){
 	jsize len = env->GetArrayLength(input);
 	jsize lenCodes = env->GetArrayLength(codes);
 	jsize lenMeans = env->GetArrayLength(means);
+	jsize lenModel = env->GetArrayLength(model);
+	jsize lenScaleParamsMean = env->GetArrayLength(scaleparamsMean);
+	jsize lenScaleParamsSd = env->GetArrayLength(scaleparamsSd);
+	jsize lenMask = env->GetArrayLength(imageMask);
 	jdouble * codesBody = env->GetDoubleArrayElements(codes, 0);
 	jdouble * meansBody = env->GetDoubleArrayElements(means, 0);
+	jdouble * modelBody = env->GetDoubleArrayElements(model, 0);
+	jdouble * maskBody = env->GetDoubleArrayElements(imageMask, 0);
+	jdouble * scaleParamsMeanBody = env->GetDoubleArrayElements(scaleparamsMean, 0);
+	jdouble * scaleParamsSdBody = env->GetDoubleArrayElements(scaleparamsSd, 0);
 	jdouble * body = env->GetDoubleArrayElements(input, 0);
 
 	tick1 = getCPUTickCount();
@@ -247,9 +294,31 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 	for (int i = 0; i < lenMeans; i++){
 		((float*)meansMat.data)[i] = (float)meansBody[i];
 	}
-	GpuMat codesG, meansG;
+	Mat modelMat(2, lenModel / 2, CV_32FC1);
+	for (int i = 0; i < lenModel; i++){
+		((float*)modelMat.data)[i] = (float)modelBody[i];
+	}
+	Mat scaleParamsMean(1, lenScaleParamsMean, CV_32FC1);
+	for (int i = 0; i < lenScaleParamsMean; i++){
+		((float*)scaleParamsMean.data)[i] = (float)scaleParamsMeanBody[i];
+	}
+	Mat scaleParamsSd(1, lenScaleParamsSd, CV_32FC1);
+	for (int i = 0; i < lenScaleParamsSd; i++){
+		((float*)scaleParamsSd.data)[i] = (float)scaleParamsSdBody[i];
+	}
+	Mat imageMaskMat(1, lenMask, CV_32FC1);
+	for (int i = 0; i < lenMask; i++){
+		((float*)imageMaskMat.data)[i] = (float)maskBody[i];
+	}
+	
+
+	GpuMat codesG, meansG, modelG, imageMaskG;
 	codesG.upload(codesMat);
 	meansG.upload(meansMat);
+	modelG.upload(modelMat);
+	imageMaskG.upload(imageMaskMat);
+	//scaleParamsMeanG.upload(scaleParamsMean);
+	//scaleParamsSdG.upload(scaleParamsSdG);
 
 	Mat tempMat;
 	tick2 = getCPUTickCount();
@@ -263,18 +332,27 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 	tick2 = getCPUTickCount();
 	//cout << "C++ feature extractor time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	
+	GpuMat segmentationResult;
+	Mat segmentationResMat;
+	cout << "C++ starting to clasify" << endl;
+	classify(features, segmentationResult, imageMaskG, modelG, scaleParamsMean, scaleParamsSd);
+	segmentationResult.download(segmentationResMat);
+
+	Mat segmentated;
+	segmentationResult.download(segmentated);
+	segmentated=segmentated.reshape(1, inputImage.rows);
 	tick1 = getCPUTickCount();
 	GpuMat feature = features(Range(32, 33), Range(0, features.cols));
 	Mat featureMat;
 	Mat featureMat2;
 	Mat converted;
 	feature.download(featureMat);
-	featureMat2 = featureMat.reshape(0, inputImage.rows);
+	
 
-	double *buffer = (double *)malloc(sizeof(double)*(featureMat.total()));
+	double *buffer = (double *)malloc(sizeof(double)*(segmentationResMat.total()));
 
-	float * ptr = (float *)featureMat.data;
-	for (int i = 0; i < featureMat.total(); i++){
+	float * ptr = (float *)segmentationResMat.data;
+	for (int i = 0; i < segmentationResMat.total(); i++){
 		buffer[i] = (double)(ptr[i]);
 	}
 
