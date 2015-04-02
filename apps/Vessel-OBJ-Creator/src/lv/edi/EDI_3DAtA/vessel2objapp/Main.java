@@ -42,7 +42,12 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		compute = new Compute(); // initialize opencv cuda interface
+		try {
+			compute = new Compute(); // initialize opencv cuda interface
+		} catch (UnsatisfiedLinkError e1) {
+			// TODO Auto-generated catch block
+			compute=null;
+		}
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dCodes.csv"));
 		CommonOps.transpose(codes);
 		means = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dMean.csv"));
