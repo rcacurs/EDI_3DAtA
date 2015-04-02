@@ -347,7 +347,7 @@ public class AppController implements Initializable{
 							updateProgress(0, 100);
 							break;
 						}
-						
+						long time1 = System.currentTimeMillis();
 						layerImage = Main.selectedTomographyScan.getLayerImage(layer);	
 						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
 						layerMask = Main.tomographyScanLungMasks.getLayerImage(layer);
@@ -364,6 +364,8 @@ public class AppController implements Initializable{
 						layerFeatures=null;
 						layerMask=null;
 						layerImage=null;
+						long time2 = System.currentTimeMillis();
+						System.out.println("Bloos vessel segmentation time: "+(time2-time1)+" [ms]");
 					}
 					Main.volumeVesselSegmentationData=segmentationDataLocal;
 					segmentationDataLocal=null;
