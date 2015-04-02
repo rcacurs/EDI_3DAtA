@@ -340,8 +340,8 @@ public class AppController implements Initializable{
 					DenseMatrix64F layerImage;
 					DenseMatrix64F layerMask;
 					DenseMatrix64F layerVesselSegmentated;
-					VolumetricData segmentationDataLocal = new VolumetricData();
 					LayerSMFeatures layerFeatures;
+					VolumetricData segmentationDataLocal = new VolumetricData();
 					for(layer = layerRange[0]; layer <=layerRange[1]; layer++){
 						if(isCancelled()){
 							updateProgress(0, 100);
@@ -349,23 +349,37 @@ public class AppController implements Initializable{
 						}
 						long time1 = System.currentTimeMillis();
 						layerImage = Main.selectedTomographyScan.getLayerImage(layer);	
-						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+//						layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
 						layerMask = Main.tomographyScanLungMasks.getLayerImage(layer);
+//						
+//						classifier.setData(layerFeatures);
+//						classifier.setMaskImage(layerMask);
+//						
+//						classifier.classify();
+//						
+//						layerVesselSegmentated = classifier.getResult();
+						if(Main.compute!=null){
+							double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, Main.codes.data, Main.means.data, 5, Main.codes.numCols, Main.model.data, Main.scaleParamsMean.data, Main.scaleParamsSd.data, layerMask.data);
+							//outputImageD = compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, codes.data, means.data, 5, 32, model.data, scaleparamsMean.data, scaleparamsSd.data, maskImage.data);
+							layerVesselSegmentated = new DenseMatrix64F(layerImage.numRows, layerImage.numCols, true, bloodVesselsSegm);
+						} else{
+							layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+							classifier.setData(layerFeatures);
+							classifier.setMaskImage(layerMask);
+							
+							classifier.classify();
+							
+							layerVesselSegmentated = classifier.getResult();
+						}
 						
-						classifier.setData(layerFeatures);
-						classifier.setMaskImage(layerMask);
-						
-						classifier.classify();
-						
-						layerVesselSegmentated = classifier.getResult();
 						segmentationDataLocal.addLayer(layerVesselSegmentated);
 						
 						updateProgress(layer-layerRange[0]+1, (layerRange[1]-layerRange[0])+1);
-						layerFeatures=null;
 						layerMask=null;
 						layerImage=null;
-						long time2 = System.currentTimeMillis();
-						System.out.println("Bloos vessel segmentation time: "+(time2-time1)+" [ms]");
+
+						long time2 =System.currentTimeMillis();
+						System.out.println("Segmetation time: "+(time2-time1)+" [ms]");
 					}
 					Main.volumeVesselSegmentationData=segmentationDataLocal;
 					segmentationDataLocal=null;
@@ -573,6 +587,7 @@ public class AppController implements Initializable{
 			alert.setHeaderText("Error parsing given layer range!");
 			alert.setContentText("There seems to be problem with specified layer range for wich to perform segmentation.");
 			alert.showAndWait();
+			range=null;
 			return range;
 		}
 		if(range[0]>range[1]){
@@ -580,6 +595,7 @@ public class AppController implements Initializable{
 			alert.setHeaderText("Error parsing given layer range!");
 			alert.setContentText("First specified range should be smaller index.");
 			alert.showAndWait();
+			range=null;
 			return range;
 		}
 		if(range[1]>=((int)Main.selectedTomographyScan.getDimSize().get(2))){
@@ -587,6 +603,7 @@ public class AppController implements Initializable{
 			alert.setHeaderText("Error parsing given layer range!");
 			alert.setContentText("Selected layer range shouldn't exceed number of layers in selected CT scan.");
 			alert.showAndWait();
+			range=null;
 			return range;
 		}
 

@@ -1,6 +1,7 @@
 package lv.edi.EDI_3DAtA.vessel2objapp;
 	
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,9 +11,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
+import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
+import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 import lv.edi.EDI_3DAtA.common.VolumetricData;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.marchingcubes.TriangleMeshData;
+import lv.edi.EDI_3DAtA.opencvcudainterface.Compute;
 
 
 public class Main extends Application {
@@ -21,6 +25,11 @@ public class Main extends Application {
 	static VolumetricData volumeVesselSegmentationData;
 	static int[] segmentatedDataRange = new int[2];
 	static int selectedLayer=100;
+	static DenseMatrix64F means;
+	static DenseMatrix64F codes;
+	static DenseMatrix64F model;
+	static DenseMatrix64F scaleParamsMean;
+	static DenseMatrix64F scaleParamsSd;
 	static DenseMatrix64F currentLayerImage;
 	static TriangleMeshData trMeshData;
 	static MeshView bloodVessel3DView;
@@ -29,9 +38,22 @@ public class Main extends Application {
 	static float cameraRotAngleZ=0;
 	static float cameraRotAngleX=0;
 	static float translateZ=-1000;
+	static Compute compute;
 
 	@Override
 	public void start(Stage primaryStage) {
+		try {
+			compute = new Compute(); // initialize opencv cuda interface
+		} catch (UnsatisfiedLinkError e1) {
+			// TODO Auto-generated catch block
+			compute=null;
+		}
+		codes = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dCodes.csv"));
+		CommonOps.transpose(codes);
+		means = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dMean.csv"));
+		model = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("model.csv"));
+		scaleParamsMean = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("scaleparamsMean.csv"));
+		scaleParamsSd = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("scaleparamsSd.csv"));
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScene.fxml"));
 			Parent root = loader.load();

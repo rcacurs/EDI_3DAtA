@@ -57,3 +57,11 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
