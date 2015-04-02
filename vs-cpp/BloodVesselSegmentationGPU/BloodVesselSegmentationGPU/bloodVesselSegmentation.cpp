@@ -23,7 +23,6 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 	jdouble * body = env->GetDoubleArrayElements(input, 0);
 	jdoubleArray result = (env)->NewDoubleArray(len);
 	tick2 = getTickCount();
-	cout << "Preparing function parameters for c++ time: " << (tick2 - tick1) / (getTickFrequency()) <<" [s]"<< endl;
 
 	tick1 = getTickCount();
 	Mat inputImage(rows, cols, CV_32FC1), filteredImage;
@@ -31,12 +30,10 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 		((float*)inputImage.data)[i] = (float)body[i];
 	}
 	tick2 = getTickCount();
-	cout << "Copying data to mat type" << (tick2-tick1)/getTickFrequency()<<" [s]"<<endl;
 	tick1 = getTickCount();
 	GpuMat inputImageG, filteredImageG;
 	inputImageG.upload(inputImage);
 	tick2 = getTickCount();
-	cout << "Copying data to gpu matrix type: " << (tick2 - tick1) / getTickFrequency() << endl;
 	Ptr<Filter> gaussianFilterP = cuda::createGaussianFilter(CV_32FC1, CV_32FC1, Size(5, 5), 2, 2);
 	gaussianFilterP->apply(inputImageG, filteredImageG);
 
@@ -134,8 +131,6 @@ void filterSMF(GpuMat & input, GpuMat & output, int patchSize, GpuMat & codesD, 
 		
 		tempMatMat = allPatchesMat.row(i);//(Range(i, i + 1), Range(0, allPatches.cols));
 
-		//cout << "Submatrix extraction time: " << (tick22 - tick12)/getTickFrequency() << endl;
-
 		colindex = i / input.cols;
 		rowindex = i % input.cols;
 		Ar = rowindex;
@@ -149,26 +144,21 @@ void filterSMF(GpuMat & input, GpuMat & output, int patchSize, GpuMat & codesD, 
 		sumI = ((float*)integralMat.ptr(Ar))[Ac] + ((float*)integralMat.ptr(Dr))[Dc] - ((float*)integralMat.ptr(Cr))[Cc] - ((float*)integralMat.ptr(Br))[Bc];
 		sumIsq = float(((double*)integralSqMat.ptr(Ar))[Ac] + ((double*)integralSqMat.ptr(Dr))[Dc] - ((double*)integralSqMat.ptr(Cr))[Cc] - ((double*)integralSqMat.ptr(Br))[Bc]);
 		mean = sumI / (patchPixels);
-		var = (sumIsq - (2 * sumI*mean) + patchPixels*(mean*mean)) / (patchPixels - 1);
+		//var = (sumIsq - (2 * sumI*mean) + patchPixels*(mean*mean)) / (patchPixels-1);
+		var = (sumIsq - sumI*sumI/patchPixels) / (patchPixels - 1);
 		var = sqrt(var + 10);
 		if (var == 0) var = 1 / 1000;
 		cv::subtract(tempMatMat, mean, tempMatMat);
-		//cout << "normalisation1: " << (tick22 - tick12) / getTickFrequency() << endl;
 		cv::divide(tempMatMat, var, tempMatMat);
-		//cout << "normalisation2: " << (tick22 - tick12) / getTickFrequency() << endl;
 		//float meanf = ((float *)meansMat.data)[i];
 		cv::subtract(tempMatMat,meansMat, tempMatMat);
-		//cout << "normalisation3: " << (tick22 - tick12) / getTickFrequency() << endl;
+
 	}
-	//cout << "normalisation time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	GpuMat  empty;
 	Mat filteredMat;
-	//cout << "preparing to multiply matrices" << endl;
 	allPatches.upload(allPatchesMat);
 	cv::cuda::gemm(allPatches, codesD, 1, empty, 0, output);
 	
-
-
 }
 
 void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & codesD, GpuMat &  meanD){
@@ -178,13 +168,11 @@ void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & co
 	gaussianPyramid(input, pyramid, 6);
 
 	Mat features;// (pyramid.size()*codesD.cols, input.rows*input.cols, CV_32FC1);
-	cout << "features size: " << features.cols << " " << features.rows << endl;
 	int featureCount = 0;
 	Mat temp1, tempT;
 	GpuMat upscaledImage, oneFilter;
 	int ticki2 = getCPUTickCount();
 	
-	cout << "C++ pyramid computation time: " << (ticki2 - ticki1)/getTickFrequency() << endl;
 	for (int i = 0; i < pyramid.size(); i++){
 		ticki1 = getCPUTickCount();
 		GpuMat filteredLayer;
@@ -193,7 +181,6 @@ void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & co
 		filteredLayer.download(filteredLayerMat);
 		ticki2 = getCPUTickCount();
 
-		//cout << "C++ one scale filter time " << (ticki2 - ticki1) / getTickFrequency() << endl;
 		for (int j = 0; j < filteredLayer.cols; j++){
 			temp1 = filteredLayerMat.col(j).clone();
 			
@@ -228,33 +215,27 @@ void extractFeatures(GpuMat & input, GpuMat & output, int patchSize, GpuMat & co
 void classify(GpuMat & inputFeatures, GpuMat & output, GpuMat & maskImage, GpuMat & model, Mat & mean, Mat & Sd){
 	//masking image
 	GpuMat submat;
-	cout << "C++ masking image" << endl;
 	for (int i = 0; i < inputFeatures.rows-1; i++){
 		submat = inputFeatures(Range(i, i + 1), Range(0, inputFeatures.cols));
 		cuda::multiply(submat, maskImage, submat);
-	}
-	cout << "C++ Feature normalisation" << endl;
-	// feature normalisation
+	};
+
 	for (int i = 0; i < inputFeatures.rows-1; i++){
 		submat = inputFeatures(Range(i, i + 1), Range(0, inputFeatures.cols));
 		cuda::subtract(submat, ((float *)mean.data)[i], submat);
 		cuda::divide(submat, ((float *)Sd.data)[i], submat);
 	}
 	GpuMat featuresNorm, dummy;
-	cout << "C++ moedl coef and feature multiplication: " << endl;
 
 	cuda::gemm(model, inputFeatures, 1, dummy, 0, featuresNorm);
 	// find maximum values of featuresNorm
 	GpuMat maxVec;
-	cout << "C++ finding max values: " << endl;
 	cuda::reduce(featuresNorm, maxVec, 0, REDUCE_MAX);
 
-	cout << "C++ reducing max values: " << endl;
 	for (int i = 0; i < featuresNorm.rows; i++){
 		submat = featuresNorm(Range(i, i + 1), Range(0, featuresNorm.cols));
 		cuda::subtract(submat, maxVec, submat);
 	}
-	cout << "C++ computing exponents " << endl;
 	cuda::exp(featuresNorm, featuresNorm);
 	GpuMat sumVec;
 	cuda::reduce(featuresNorm, sumVec, 0, REDUCE_SUM);
@@ -311,7 +292,6 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 		((float*)imageMaskMat.data)[i] = (float)maskBody[i];
 	}
 	
-
 	GpuMat codesG, meansG, modelG, imageMaskG;
 	codesG.upload(codesMat);
 	meansG.upload(meansMat);
@@ -322,32 +302,28 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 
 	Mat tempMat;
 	tick2 = getCPUTickCount();
-	//cout << "Data prep time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	inputImageG.upload(inputImage);
 	GpuMat features;
 	tick2 = getCPUTickCount();
-	//cout << "C++ data preperation time: " << (tick2-tick1)/getTickFrequency()<<endl;
 	tick1 = getCPUTickCount();
 	extractFeatures(inputImageG, features, 5, codesG, meansG);
 	tick2 = getCPUTickCount();
-	//cout << "C++ feature extractor time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	
 	GpuMat segmentationResult;
 	Mat segmentationResMat;
-	cout << "C++ starting to clasify" << endl;
+
 	classify(features, segmentationResult, imageMaskG, modelG, scaleParamsMean, scaleParamsSd);
 	segmentationResult.download(segmentationResMat);
 
-	Mat segmentated;
-	segmentationResult.download(segmentated);
-	segmentated=segmentated.reshape(1, inputImage.rows);
+	//Mat segmentated;
+	segmentationResult.download(segmentationResMat);
+	//segmentationResMat=segmentationResMat.reshape(1, inputImage.rows);
 	tick1 = getCPUTickCount();
-	GpuMat feature = features(Range(32, 33), Range(0, features.cols));
+	GpuMat feature = features(Range(33, 34), Range(0, features.cols));
 	Mat featureMat;
 	Mat featureMat2;
 	Mat converted;
 	feature.download(featureMat);
-	
 
 	double *buffer = (double *)malloc(sizeof(double)*(segmentationResMat.total()));
 
@@ -356,14 +332,12 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 		buffer[i] = (double)(ptr[i]);
 	}
 
-	jdoubleArray result = (env)->NewDoubleArray(featureMat.total());
-	(env)->SetDoubleArrayRegion(result, 0, featureMat.total(), buffer);
+	jdoubleArray result = (env)->NewDoubleArray(segmentationResMat.total());
+	(env)->SetDoubleArrayRegion(result, 0, segmentationResMat.total(), buffer);
 	(env)->ReleaseDoubleArrayElements(input, body, 0);
 	tick2 = getCPUTickCount();
-	//cout << "OutputPreperation time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	free(buffer);
 	tick2 = getCPUTickCount();
 
-	cout << "C++ result data preperation time: " << (tick2 - tick1) / getTickFrequency() << endl;
 	return result;
 }
