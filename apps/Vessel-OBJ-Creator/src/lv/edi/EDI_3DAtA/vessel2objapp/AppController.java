@@ -214,7 +214,7 @@ public class AppController implements Initializable{
 			labelScanSpacingZ.setText(String.format("%.3f",Main.selectedTomographyScan.getElementSpacing().get(2)));
 			
 			File scanDir = Main.selectedTomographyScan.getElementHeaderFile().getParentFile().getParentFile();
-			File scanLungMask = new File(scanDir.toString()+"\\Lungmasks\\"+scanFile.getName());
+			File scanLungMask = new File(scanDir.toString()+File.separator+"Lungmasks"+File.separator+scanFile.getName());
 			Main.tomographyScanLungMasks = new MetaImage(scanLungMask);
 			
 			
