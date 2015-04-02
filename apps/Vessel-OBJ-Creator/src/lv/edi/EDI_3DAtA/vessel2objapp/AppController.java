@@ -54,7 +54,6 @@ import javafx.stage.Stage;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.LayerSMFeatures;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.SoftmaxRegrClassifier;
-import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 import lv.edi.EDI_3DAtA.common.VolumetricData;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.marchingcubes.MarchingCubes;
@@ -335,12 +334,13 @@ public class AppController implements Initializable{
 				protected Integer call(){
 					int layer;
 					System.out.println("Task start");
-					//SMFeatureExtractor featureExtractor = new SMFeatureExtractor();
+					SMFeatureExtractor featureExtractor = new SMFeatureExtractor();
 					
-					//SoftmaxRegrClassifier classifier = new SoftmaxRegrClassifier(Main.selectedTomographyScan.getLayerImage(0).numRows, Main.selectedTomographyScan.getLayerImage(0).numCols);
+					SoftmaxRegrClassifier classifier = new SoftmaxRegrClassifier(Main.selectedTomographyScan.getLayerImage(0).numRows, Main.selectedTomographyScan.getLayerImage(0).numCols);
 					DenseMatrix64F layerImage;
 					DenseMatrix64F layerMask;
 					DenseMatrix64F layerVesselSegmentated;
+					LayerSMFeatures layerFeatures;
 					VolumetricData segmentationDataLocal = new VolumetricData();
 					for(layer = layerRange[0]; layer <=layerRange[1]; layer++){
 						if(isCancelled()){
@@ -358,9 +358,20 @@ public class AppController implements Initializable{
 //						classifier.classify();
 //						
 //						layerVesselSegmentated = classifier.getResult();
-						double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, Main.codes.data, Main.means.data, 5, Main.codes.numCols, Main.model.data, Main.scaleParamsMean.data, Main.scaleParamsSd.data, layerMask.data);
-						//outputImageD = compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, codes.data, means.data, 5, 32, model.data, scaleparamsMean.data, scaleparamsSd.data, maskImage.data);
-						layerVesselSegmentated = new DenseMatrix64F(layerImage.numRows, layerImage.numCols, true, bloodVesselsSegm);
+						if(Main.compute!=null){
+							double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, Main.codes.data, Main.means.data, 5, Main.codes.numCols, Main.model.data, Main.scaleParamsMean.data, Main.scaleParamsSd.data, layerMask.data);
+							//outputImageD = compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, codes.data, means.data, 5, 32, model.data, scaleparamsMean.data, scaleparamsSd.data, maskImage.data);
+							layerVesselSegmentated = new DenseMatrix64F(layerImage.numRows, layerImage.numCols, true, bloodVesselsSegm);
+						} else{
+							layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
+							classifier.setData(layerFeatures);
+							classifier.setMaskImage(layerMask);
+							
+							classifier.classify();
+							
+							layerVesselSegmentated = classifier.getResult();
+						}
+						
 						segmentationDataLocal.addLayer(layerVesselSegmentated);
 						
 						updateProgress(layer-layerRange[0]+1, (layerRange[1]-layerRange[0])+1);
