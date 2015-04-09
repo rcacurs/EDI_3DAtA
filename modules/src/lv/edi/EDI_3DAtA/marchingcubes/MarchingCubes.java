@@ -14,7 +14,7 @@ import lv.edi.EDI_3DAtA.common.VolumetricData;
 
 /** Class for marching cubes algorithm execution
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  *
  */
 public class MarchingCubes {
@@ -192,7 +192,8 @@ public class MarchingCubes {
 	
 	/** saves ArrayList of vertices in .obj file
 	 * 
-	 * @param vertices vertices in ArrayList<DenseMatrix64F> format
+	 * @param vertices vertices in ArrayList{@literal <}DenseMatrix64F{@literal >} format
+	 * @param filename filename of destination file.
 	 * @throws FileNotFoundException throws if file not found or cannot be created!
  	 */
 	public static void saveVerticesToObj(ArrayList<DenseMatrix64F> vertices, String filename) throws FileNotFoundException{

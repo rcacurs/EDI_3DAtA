@@ -16,7 +16,7 @@ import org.ejml.ops.CommonOps;
 
 /**
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  * 
  * Class providing functions for image visualization
  *

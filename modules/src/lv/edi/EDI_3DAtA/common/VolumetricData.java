@@ -7,7 +7,7 @@ import org.ejml.data.DenseMatrix64F;
 
 /**
  * Class for volumetric data representation
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  *
  */
 public class VolumetricData{
@@ -80,9 +80,9 @@ public class VolumetricData{
 	/**
 	 * Returns values of volumetric data at cube vertices with origin at specified coordinates
 	 * Usefull in marching cubes algorithm. 
-	 * @param x - x coordinate index
-	 * @param y - y coodinate index
-	 * @param z - z coordinate index
+	 * @param i - x coordinate index
+	 * @param j - y coodinate index
+	 * @param k - z coordinate index
 	 * @return double[] Values on cube vertices are returned as double[] array of size 8
 	 *  order of values are corresponding:
 	 *  double[] = {Value(i, j, k), Value(i+1, j, k), Value(i+1, j, k+1),

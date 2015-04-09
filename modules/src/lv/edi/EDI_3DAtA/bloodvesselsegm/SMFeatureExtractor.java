@@ -10,7 +10,7 @@ import org.ejml.ops.CommonOps;
 
 /**
  * 
- * @author Code - Ričards Cacurs.
+ * @author Code - Ricards Cacurs.
  * 
  *  Class representing Stacked Multiscale Feature extractor from paper:
  *  Adam Coates and Andrew Y. Ng "Learning Feature Representations with K-means", 
@@ -53,7 +53,7 @@ public class SMFeatureExtractor {
 	}
 	/**
 	 * Function for setting feature extractor codes from InputStream
-	 * @param inputStream InputStream object representing stream from .csv file
+	 * @param iStream InputStream object representing stream from .csv file
 	 */
 	public void setCodes(InputStream iStream){
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(iStream);
@@ -68,7 +68,7 @@ public class SMFeatureExtractor {
 	
 	/**
 	 * Function for setting feature extractor means from InputStream
-	 * @param inputStream InputStream object representing stream from .csv file
+	 * @param iStream InputStream object representing stream from .csv file
 	 */
 	public void setMeans(InputStream iStream){
 		means = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(iStream);

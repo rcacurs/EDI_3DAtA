@@ -6,7 +6,7 @@ import org.ejml.data.DenseMatrix64F;
 
 /**
  * Class representing Gaussian pyramid of image. Each layer of pyramid is two times smaller.
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  *
  */
 public class GaussianPyramid {

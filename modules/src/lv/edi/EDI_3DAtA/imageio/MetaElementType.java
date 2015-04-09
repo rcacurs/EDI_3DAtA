@@ -2,7 +2,7 @@ package lv.edi.EDI_3DAtA.imageio;
 
 /**
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  * Enumeration representing meta image data types for data saved in .raw file
  *
  */

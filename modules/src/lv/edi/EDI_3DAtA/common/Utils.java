@@ -2,7 +2,7 @@ package lv.edi.EDI_3DAtA.common;
 import org.ejml.data.DenseMatrix64F;
 /**
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  * 
  * This class is created for various utility functions for data formatting etc
  * 

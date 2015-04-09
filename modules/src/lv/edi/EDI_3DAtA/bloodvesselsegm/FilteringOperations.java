@@ -5,7 +5,7 @@ import org.ejml.ops.CommonOps;
 
 /**
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  *
  * Class consisting of operations for filtering image in DenseMatrix64F format
  */

@@ -12,9 +12,9 @@ public class SMFilterBlock {
 	 * Function returns the image which is filtered with filter bank
 	 * @param inputImage - input 2D image in the DenseMatrix64F format
 	 * @param patchSize - size of the patch
-	 * @param dCodesFileName - file name of the filter bank
-	 * @param dMeanFileName - file name of the filter bank mean values
-	 * @return - filtering result
+	 * @param codes - file name of the filter bank
+	 * @param mean - file name of the filter bank mean values
+	 * @return - filtering result in DenseMatrix64F format
 	 */
 	public static DenseMatrix64F filter ( DenseMatrix64F inputImage, int patchSize, DenseMatrix64F codes, DenseMatrix64F mean )
 	{
@@ -47,6 +47,7 @@ public class SMFilterBlock {
 	/**
 	 * computes the normalising vector for patches normalisation 
 	 * @param vector - vector of variances to be updated
+	 * @return - normalised version of input vector 
 	*/
 	public static DenseMatrix64F smNormalizer ( DenseMatrix64F vector )
 	{
@@ -60,8 +61,8 @@ public class SMFilterBlock {
 	
 	/**
 	 * computes the variance of the row elements in the input mean normalised array. The normaliser is (array.numCols-1)
-	 * @param array - array to be subtracted from
-	 * @param vector - vector to subtract from the array
+	 * @param array - input array
+	 * @return - computed row variances in DenseMatrix64F format in for each row
 	*/
 	public static DenseMatrix64F arrayRowVar ( DenseMatrix64F array )
 	{
@@ -83,6 +84,7 @@ public class SMFilterBlock {
 	 * element-wise multiplication of input array rows/columns with elements in the input vector
 	 * @param array - array to be multiplied and updated
 	 * @param vector - vector with coefficients
+	 * @return - multiplication result in DenseMatrix64F format
 	*/
 	public static DenseMatrix64F bsxfunMultiply ( DenseMatrix64F array, DenseMatrix64F vector )
 	{	
@@ -115,6 +117,7 @@ public class SMFilterBlock {
 	 * element-wise division of input array rows/columns with elements in the input vector
 	 * @param array - array to be divided and updated
 	 * @param vector - vector with denominator values
+	 * @return division result in DenseMatrix64F format
 	*/
 	public static DenseMatrix64F bsxfunDivide ( DenseMatrix64F array, DenseMatrix64F vector )
 	{	
@@ -180,6 +183,7 @@ public class SMFilterBlock {
 	 * Rearrange image blocks into rows. Similar to Matlab im2col
 	 * @param inputImage - input image in the DenseMatrix64F format
 	 * @param patchSize - defines the size of the patch. Patch dimensions: (patchSize x patchSize)
+	 * @return reformed image in DenseMatrix64F format
 	*/
 	public static DenseMatrix64F im2col ( DenseMatrix64F inputImage, int patchSize )
 	{
@@ -213,6 +217,7 @@ public class SMFilterBlock {
 	 * Computes the vector with mean values of all patches in the input image
 	 * @param inputImage - input image in the DenseMatrix64F format
 	 * @param patchSize - defines the size of the patch. Patch dimensions: (patchSize x patchSize)
+	 * @return means of patches in DenseMatrix64F format
 	*/
 	public static DenseMatrix64F computeMeanOfPatches ( DenseMatrix64F inputImage, int patchSize )
 	{
@@ -241,6 +246,7 @@ public class SMFilterBlock {
 	/**
 	 * Computes the integral image of the input 2D matrix
 	 * @param inputImage - input 2D matrix of the DenseMatrix64F type
+	 * @return computed integral image in DenseMatrix64F format
 	*/
 	public static DenseMatrix64F integralImage( DenseMatrix64F inputImage )
 	{
@@ -282,6 +288,7 @@ public class SMFilterBlock {
 	 * @param col - col number / X coordinate of the top left corner
 	 * @param h - height o the region
 	 * @param w - width of the region
+	 * @return region sum as double
 	*/
 	public static double regionSum( DenseMatrix64F integralImage, int row, int col, int h, int w )
 	{
@@ -314,6 +321,7 @@ public class SMFilterBlock {
 	 * Pads the array with zeros 
 	 * @param inputImage - input 2D matrix of the DenseMatrix64F type
 	 * @param padSize - padding size. The size of the output array = ( Height + 2*padSize ) x ( Width + 2*padSize )
+	 * @return padded image in DenseMatrix64F format
 	*/
 	public static DenseMatrix64F padArray( DenseMatrix64F inputImage, int padSize )
 	{

@@ -29,7 +29,8 @@ public class LayerSMFeatures {
 	
 	/**
 	 * Method sets specific feature for all layer pixels
-	 * @param featureIndex
+	 * @param featureIndex index for required feature
+	 * @param featureImage double[] array where resulting feature image data will be stored in row major order
 	 */
 	public void setFeature(int featureIndex, double[] featureImage){
 		if(featureImage.length==features.numCols){
@@ -50,7 +51,7 @@ public class LayerSMFeatures {
 	}
 	
 	/**
-	 * Set the element in the feature array. Type casting (double -> float) is done internally
+	 * Set the element in the feature array. Type casting (double to float) is done internally
 	 * @param row - current pixel row number
 	 * @param col - current pixel column number
 	 * @param featureNum - serial number of the feature

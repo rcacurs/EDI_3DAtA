@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 
 /**
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  * Class that packs triangular mesh dasta.
  */
 
@@ -22,6 +22,7 @@ public class TriangleMeshData {
 	 * @param vertices array of vertices
 	 * @param texCoords	array of texture coordinates
 	 * @param faces array of faces
+	 * @param center coordinates for center point of model
 	 */
 	public TriangleMeshData(float[] vertices, float[] texCoords, int[] faces, float[] center){
 		this.vertices = vertices;

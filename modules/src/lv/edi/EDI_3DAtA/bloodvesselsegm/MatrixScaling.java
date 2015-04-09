@@ -5,7 +5,7 @@ import org.ejml.ops.CommonOps;
 
 /**
  * 
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  * 
  * Functions for matrix scaling and interpolation
  *
@@ -156,8 +156,8 @@ public class MatrixScaling {
 	 * for digital image processing". IEEE Transactions on Acoustics, 
 	 * Speech, and Signal Processing. The kernel function is defined
 	 * with following equations:
-	 * h(x)={(a+2)|x|^3-(a+3)|x|^2+1, for |x|<=1,
-	 * 		{a|x|^3-5a|x|^2+8a|x|-4a}, for 1<|x|<2.
+	 * h(x)={(a+2)|x|^3-(a+3)|x|^2+1, for |x|{@literal <}=1,
+	 * 		{a|x|^3-5a|x|^2+8a|x|-4a}, for 1{@literal <}|x|{@literal <}2.
 	 * 		{0, 					 otherwise}
 	 * 
 	 * @param x argument for kernel function.
@@ -195,7 +195,10 @@ public class MatrixScaling {
 	}
 	
 	/** Function for image resizing. Currently performs Bicubic Convolution interpolation, and
-	 * Proides only integer scale parameters greater that one
+	 * Provides only integer scale parameters greater that one.
+	 * @param matrix DenseMatrix64F matrix representing input image
+	 * @param scaleFactor - integer number representing scale factor
+	 * @return DenseMatrix64F returns resized version of input image
 	 */
 	public static DenseMatrix64F imResize(DenseMatrix64F matrix, int scaleFactor){
 		DenseMatrix64F rowInterp = upsampleRows(matrix,scaleFactor, scaleFactor/2);

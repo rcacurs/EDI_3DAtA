@@ -2,7 +2,7 @@ package lv.edi.EDI_3DAtA.marchingcubes;
 
 /**
  * Class representing vertex (3 dimmensional point)
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  *
  */
 public class Vertex {

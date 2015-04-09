@@ -16,7 +16,7 @@ import lv.edi.EDI_3DAtA.common.VolumetricData;
 import org.ejml.data.DenseMatrix64F;
 
 /**
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  * Class represents data in medical image format - meta image (.mhd .raw)
  * 
  */

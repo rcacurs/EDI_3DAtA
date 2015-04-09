@@ -7,7 +7,7 @@ import org.ejml.ops.CommonOps;
 
 /**
  * Class representing cube for Marching Cubes algorithm
- * @author Ričards Cacurs
+ * @author Ricards Cacurs
  *  
  *         v7____e6_______ v6
  *        /|             /|
@@ -25,8 +25,8 @@ import org.ejml.ops.CommonOps;
  *          |  /|Y
  *          |  /
  *          | / 
- *          |/_____________> X
- *    
+ *          |/_____________\X
+ *                         /
  *      
  */
 public class CubeMC {
@@ -370,6 +370,7 @@ public class CubeMC {
 	/**
 	 * returns index for particular case of cube depending on vertex
 	 * intensity values and isovalue
+	 * @param isovalue - isosurface value at wich surface is generated
 	 * @return int - index for particular case (used to get case specific cube surface triangle configurations)
 	 */
 	
@@ -395,7 +396,7 @@ public class CubeMC {
 	
 	/**
 	 * Get interpolated edge vertex in DenseMatrix64F format
-	 * @param Vstrat start vertex in dense matrix format (as column vector)
+	 * @param Vst start vertex in dense matrix format (as column vector)
 	 * @param Vend end vertex in dense matrix format (as column vector)
 	 * @param Lst density value of start vertex
 	 * @param Lend density value of end vertex

@@ -1,4 +1,6 @@
 lv.edi.EDI_3DAtA.bloodvesselsegm
 lv.edi.EDI_3DAtA.common
 lv.edi.EDI_3DAtA.imageio
+lv.edi.EDI_3DAtA.marchingcubes
+lv.edi.EDI_3DAtA.opencvcudainterface
 lv.edi.EDI_3DAtA.visualization

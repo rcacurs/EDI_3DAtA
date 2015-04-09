@@ -25,6 +25,9 @@ public class SoftmaxRegrClassifier {
 	 * Constructor of the LogRegrClassifier class
 	 * @param meanFilename - name of the CSV file for mean-normalization of the features
 	 * @param sdFilename - name of the CSV file for sd-normalization of the features
+	 * @param modelFilename - name of the CSF file for model parameters
+	 * @param imHeight - height of an image in pixels
+	 * @param imWidth - width of an image in pixels
 	 */
 	public SoftmaxRegrClassifier(String meanFilename, 
 			String sdFilename, 
@@ -39,6 +42,11 @@ public class SoftmaxRegrClassifier {
 		// this.maskImage = maskImage;
 	}
 	
+	/** Constructor with default filenames for clasifier parameters
+	 *  @param imHeight - height of an image in pixels
+	 *  @param imWidth - width of an image in pixels
+	 * 
+	 */
 	public SoftmaxRegrClassifier(int imHeight, int imWidth){
 		
 		this.mean = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SoftmaxRegrClassifier.class.getResourceAsStream("scaleparamsMean.csv"));
