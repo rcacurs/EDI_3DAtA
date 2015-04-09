@@ -258,7 +258,7 @@ public class AppController implements Initializable{
 		Date date = new Date();
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(date);
-		String fileName = exportDir.toString()+"/blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
+		String fileName = exportDir.toString()+File.separator+"blood-vessel-model-"+(cal.get(Calendar.DAY_OF_MONTH))+""
 				   +(cal.get(Calendar.MONTH)+1)+""
 				   +(cal.get(Calendar.YEAR))+""
 				   +(cal.get(Calendar.HOUR))+""+
@@ -272,6 +272,7 @@ public class AppController implements Initializable{
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("File sucesfully created!");
 		alert.setHeaderText(null);
+		alert.setResizable(true);
 		alert.setContentText("3D Model exported as file - "+fileName);
 		alert.showAndWait();
 	}
