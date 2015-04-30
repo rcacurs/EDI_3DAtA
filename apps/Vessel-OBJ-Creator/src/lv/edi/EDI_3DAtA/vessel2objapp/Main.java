@@ -4,6 +4,7 @@ import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Camera;
@@ -39,6 +40,7 @@ public class Main extends Application {
 	static float cameraRotAngleX=0;
 	static float translateZ=-1000;
 	static Compute compute;
+	public static HostServices hostServices;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -69,6 +71,7 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		hostServices = getHostServices();
 	}
 	
 	public static void main(String[] args) {

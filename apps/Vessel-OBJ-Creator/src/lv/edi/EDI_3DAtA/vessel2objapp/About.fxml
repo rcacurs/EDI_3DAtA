@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="556.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lv.edi.EDI_3DAtA.vessel2objapp.MiscController">
+   <children>
+      <TextFlow prefHeight="119.0" prefWidth="556.0" textAlignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Program Developed in &quot;Institute of Electronics and Computer Science&quot;" textAlignment="CENTER" wrappingWidth="410.685546875">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+         </children>
+         <padding>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </padding>
+      </TextFlow>
+      <ImageView fx:id="imageViewLogo" fitHeight="192.0" fitWidth="208.0" pickOnBounds="true" preserveRatio="true" />
+      <Hyperlink fx:id="hyperlinkEdi" onAction="#onHyperlinkEdi" text="http://www.edi.lv/">
+         <VBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </VBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Hyperlink>
+   </children>
+</VBox>

@@ -15,11 +15,14 @@ import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
+import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Alert;
@@ -32,6 +35,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -523,6 +527,43 @@ public class AppController implements Initializable{
         previousX=currentX;
         previousY=currentY;
         }
+	@FXML
+	public void onSelectAbout(ActionEvent event){
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("About.fxml"));
+			Parent root = loader.load();
+			Stage stage = new Stage();
+			stage.setTitle("About");
+			stage.setScene(new Scene(root, 450, 450));
+			stage.show();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@FXML
+	public void onSelectHelp(ActionEvent event){
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Help.fxml"));
+		Parent root;
+		
+		try {
+			root = loader.load();
+			Stage stage = new Stage();
+			stage.setTitle("Help");
+			stage.setScene(new Scene(root));
+			ImageView iv = (ImageView)root.lookup("#helpImageId");
+			Image ivImage = new Image(getClass().getResourceAsStream("program-help.png"));
+			iv.setImage(ivImage);
+			stage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+	}
+	
 	@FXML
 	public void on3DViewClick(MouseEvent event){
 		previousX=event.getX();
