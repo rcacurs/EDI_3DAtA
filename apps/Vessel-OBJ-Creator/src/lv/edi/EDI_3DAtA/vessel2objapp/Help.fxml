@@ -5,8 +5,8 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="775.0" prefWidth="1009.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="521.0" prefWidth="1149.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fx:id="helpImageId" fitHeight="773.0" fitWidth="1019.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="helpImageId" fitHeight="525.0" fitWidth="1159.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </VBox>
