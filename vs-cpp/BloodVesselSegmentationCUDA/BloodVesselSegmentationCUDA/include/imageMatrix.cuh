@@ -3,6 +3,7 @@
 
 #include<Math.h>
 //  class that describes grayscale image matrix for computation on GPU using CUDA
+
 class ImMatG{
 public:
 	int rows;
