@@ -7,10 +7,12 @@ import javax.swing.JFrame;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.FilteringOperations;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.LayerSMFeatures;
 import lv.edi.EDI_3DAtA.bloodvesselsegm.SMFeatureExtractor;
+import lv.edi.EDI_3DAtA.common.DenseMatrixConversions;
 import lv.edi.EDI_3DAtA.imageio.MetaImage;
 import lv.edi.EDI_3DAtA.visualization.ImageVisualization;
 
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 public class Main {
 	static MetaImage metaImage;
@@ -38,7 +40,7 @@ public class Main {
 		}
 		// READ LAYER DATA FROM IMAGE
 		int z=0;
-		while(z<5){
+		while(z<1){
 			z++;
 			try {
 				
@@ -57,10 +59,18 @@ public class Main {
 //			ImageVisualization.imshow(layerImage, inputImageFrame);
 			// EXTRACT FEATURES
 //			System.out.println("Extracting Features... ");
-			featureExtractor = new SMFeatureExtractor("../../modules/res/dCodes", "../../modules/res/dMean", 5, 6);
+			DenseMatrix64F readF;
+			DenseMatrixConversions.loadCSVtoDenseMatrix("C:\\Users\\Richards\\Dropbox\\EDI\\Projekts_3DAtA\\Eclipse-Workspace-Win\\TestFeatureExtractor\\dCodes");
+			System.out.println("test");
+			featureExtractor = new SMFeatureExtractor("C:\\Users\\Richards\\Dropbox\\EDI\\Projekts_3DAtA\\Eclipse-Workspace-Win\\TestFeatureExtractor\\dCodes", 
+					                                   "C:\\Users\\Richards\\Dropbox\\EDI\\Projekts_3DAtA\\Eclipse-Workspace-Win\\TestFeatureExtractor\\dMean", 5, 6);
 			time1 = System.currentTimeMillis();
 			layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
 			time2 = System.currentTimeMillis();
+			
+			DenseMatrix64F featureMat = layerFeatures.getFeatures();
+			CommonOps.transpose(featureMat);
+			//DenseMatrixConversions.saveDenseMatrixToCSV(featureMat, "featuresMat");
 			System.out.println("Feature extraction time: "+(time2-time1)+" [ms]");
 			
 			// VISUALIZING FEATURES
