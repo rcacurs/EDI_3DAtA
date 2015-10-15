@@ -105,6 +105,15 @@ void columnSum(const ImMatG *input, ImMatG *output);
 //		meanVector - pointer where result is stored
 void meansOfPatches(const ImMatG *inputImage, int patchSize, ImMatG *meanVector);
 
+//computes variances of patches from computed integral image.
+//parameters:
+//		integralImage - integral image
+//		integralImageSq - integral image of squared elements
+//		int patchSize - size of the patch 
+//		varVec - pointer to where result is stored
+//
+void variancesOfPatches(const ImMatG *integralImage, const ImMatG *integralImageSq, int patchSize, ImMatG *varVector);
+
 // functions performs bicubic resize of image. currently supports only integer number resize
 // parameters:
 //		inputImage - image to be resized

@@ -18,6 +18,18 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\gpuBloodVesselSegmentation.cu" />
+    <CudaCompile Include="src\gpuConvolution.cu" />
+    <CudaCompile Include="src\gpuImageScaling.cu" />
+    <CudaCompile Include="src\imageMatrix.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\gpuBloodVesselSegmentation.cuh" />
+    <ClInclude Include="include\gpuConvolution.cuh" />
+    <ClInclude Include="include\gpuImageScaling.cuh" />
+    <ClInclude Include="include\imageMatrix.cuh" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4C7BB9C2-E146-4C27-9C72-9AE2CDC1D7B2}</ProjectGuid>
     <RootNamespace>BloodVesselSegmentationCUDA</RootNamespace>
@@ -150,9 +162,6 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <CudaCompile Include="kernel.cu" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 7.0.targets" />

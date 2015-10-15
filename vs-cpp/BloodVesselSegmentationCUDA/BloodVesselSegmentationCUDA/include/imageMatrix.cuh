@@ -1,6 +1,8 @@
 #ifndef __IMAGE_MATRIX_CUH
 #define __IMAGE_MATRIX_CUH
 
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 #include<Math.h>
 //  class that describes grayscale image matrix for computation on GPU using CUDA
 
