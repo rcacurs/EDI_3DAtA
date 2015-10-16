@@ -1,4 +1,6 @@
-#include "../include/imageMatrix.cuh"
+#include "../include/imageMatrix.h"
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 #include <iostream>
 //ImMatG function definition
 
@@ -77,6 +79,34 @@ void ImMatG::fillRow(size_t row, double value){
 
 	int threadNum = 128;
 	fillRowKernel << <dim3(ceil(cols / threadNum), 1, 1), dim3(threadNum, 1, 1) >> >(data_d, cols, row, value);
+}
+
+// creates im mat object from csv file
+// parameter:
+//		filename - filename of the files
+// returns: image matrix allocated on gpu
+ImMatG* readCSV(std::string fileName){
+	std::ifstream fileStream(fileName);
+	std::string line;
+	double val;
+	std::vector<double> values;
+	int rows = 0, cols = 0;
+	while (getline(fileStream, line)){
+		std::stringstream ss(line);
+		cols = 0;
+		while (ss >> val){
+			values.push_back(val);
+			cols++;
+			if (ss.peek() == ','){
+				ss.ignore();
+			}
+
+		}
+		rows++;
+	}
+	ImMatG * result = new ImMatG(rows, cols, values.data(), false);
+	return result;
+
 }
 
 __global__ void getColumnKernel(double *image, size_t rows, size_t cols, double *column){

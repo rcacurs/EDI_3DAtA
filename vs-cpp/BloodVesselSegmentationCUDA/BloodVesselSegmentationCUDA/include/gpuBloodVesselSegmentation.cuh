@@ -5,7 +5,7 @@
 #include "device_launch_parameters.h"
 #include <cublas_v2.h>
 #include <vector>
-#include"../include/imageMatrix.cuh"
+#include"../include/imageMatrix.h"
 #include"../include/gpuImageScaling.cuh"
 
 // performs bloodvessel segmentation from CT scan

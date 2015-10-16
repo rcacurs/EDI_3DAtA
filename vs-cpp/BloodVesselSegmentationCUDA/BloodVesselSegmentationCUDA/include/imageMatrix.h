@@ -1,9 +1,12 @@
 #ifndef __IMAGE_MATRIX_CUH
 #define __IMAGE_MATRIX_CUH
 
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
+
 #include<Math.h>
+#include<string>
+#include<fstream>
+#include<sstream>
+#include<vector>
 //  class that describes grayscale image matrix for computation on GPU using CUDA
 
 class ImMatG{
@@ -45,5 +48,7 @@ public:
 	//		row - row which is filled
 	//		value - value which is filled
 	void fillRow(size_t row, double value);
+
+	ImMatG* readCSV(std::string fileName);
 };
 #endif

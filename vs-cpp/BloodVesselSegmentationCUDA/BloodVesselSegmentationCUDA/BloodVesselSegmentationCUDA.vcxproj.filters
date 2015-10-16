@@ -7,9 +7,9 @@
     <CudaCompile Include="src\gpuBloodVesselSegmentation.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\imageMatrix.cuh" />
     <ClInclude Include="include\gpuConvolution.cuh" />
     <ClInclude Include="include\gpuImageScaling.cuh" />
     <ClInclude Include="include\gpuBloodVesselSegmentation.cuh" />
+    <ClInclude Include="include\imageMatrix.h" />
   </ItemGroup>
 </Project>

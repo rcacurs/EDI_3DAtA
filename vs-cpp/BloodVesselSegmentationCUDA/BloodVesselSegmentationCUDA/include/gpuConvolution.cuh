@@ -3,7 +3,7 @@
 
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "../include/imageMatrix.cuh"
+#include "../include/imageMatrix.h"
 
 // Performs 2D seperable convolution
 //		inpuMat - input matrix on which to performe convolution

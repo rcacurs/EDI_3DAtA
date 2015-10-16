@@ -3,7 +3,7 @@
 #include<math.h>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include"../include/imageMatrix.cuh"
+#include"../include/imageMatrix.h"
 #include "../include/gpuConvolution.cuh"
 #include<vector>
 
