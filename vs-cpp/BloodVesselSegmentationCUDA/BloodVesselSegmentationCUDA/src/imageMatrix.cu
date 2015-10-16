@@ -109,6 +109,12 @@ ImMatG* readCSV(std::string fileName){
 
 }
 
+double *ImMatG::getData(){
+	double * data = new double[getLength()];
+	cudaMemcpy(data, data_d, sizeof(double)*getLength(), cudaMemcpyDeviceToHost);
+	return data;
+}
+
 __global__ void getColumnKernel(double *image, size_t rows, size_t cols, double *column){
 
 	int xIdx = threadIdx.x + blockIdx.x*blockDim.x;
