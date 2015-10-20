@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
 	Mat imageGS;
 	Mat maskGS;
 	double threshold = 0.8;
-	int iterations = 10;
+	int iterations = 3;
 	cvtColor(imageMask, maskGS, CV_RGB2GRAY);
 	cvtColor(image, imageGS, CV_RGB2GRAY);
 	maskGS=maskGS/255;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
 	
 	tick1 = getTickCount();
 	for(int i=0; i<iterations; i++){
-		ImMatG *segmRest = segmentBloodVessels(imageGPU, maskGPU, dCodes, dMeans, scaleMean, model, scalesSd);
+		ImMatG *segmRest = segmentBloodVessels(imageGPU, dCodes, dMeans, scaleMean, model, scalesSd);
 		double *dtt = segmRest->getData();
 		delete segmRest;
 		delete[] dtt;
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
 	
 	cout <<"segmentation average time for" <<iterations<<" iterations: "<<1000*((double)tick2-tick1)/(getTickFrequency()*iterations)<<"[ms]"<<endl;
 	
-	ImMatG * segmRes = segmentBloodVessels(imageGPU, maskGPU, dCodes, dMeans, scaleMean, model, scalesSd);
+	ImMatG * segmRes = segmentBloodVessels(imageGPU, dCodes, dMeans, scaleMean, model, scalesSd);
 	double *dt = segmRes->getData();
 	
 	cout<<"segm res size: "<<segmRes->rows<<" "<<segmRes->cols<<endl;
@@ -66,7 +66,8 @@ int main(int argc, char *argv[]){
 	cout<<outputRGB.rows<<" "<<outputRGB.cols<<" "<<outputRGB.total()<<" "<<outputRGB.channels()<<endl;
 	for(int i=0; i<(outputRGB.rows)*(outputRGB.cols); i++){
 		double val = ((double *)(resultMat.data))[i];
-		 if(val>=threshold){
+		double mask =((double *)(maskGS.data))[i];
+		 if((val>=threshold) &&(mask==1.0)){
 			 ((float *)(outputRGB.data))[i*3]=0;
 			 ((float *)(outputRGB.data))[i*3+1]=1.0f;
 			 ((float *)(outputRGB.data))[i*3+2]=0;			

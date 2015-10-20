@@ -109,17 +109,14 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 
 
 
-ImMatG * classify(ImMatG * features, ImMatG * mask, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd, cublasHandle_t handle){
-	ImMatG *featuresMasked = new ImMatG();
+ImMatG * classify(ImMatG * features, int rows, int cols, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd, cublasHandle_t handle){
+	
 
-	bsxfunmultRow(features, featuresMasked, mask->data_d);
-
-	featuresMasked->fillRow(192, 1);
+	features->fillRow(192, 1);
 
 	ImMatG * featuresNoMean = new ImMatG();
 
-	bsxfunminusCol(featuresMasked, featuresNoMean, scaleMean->data_d);
-	delete featuresMasked;
+	bsxfunminusCol(features, featuresNoMean, scaleMean->data_d);
 
 	ImMatG * featuresNoSd = new ImMatG();
 
@@ -171,18 +168,18 @@ ImMatG * classify(ImMatG * features, ImMatG * mask, ImMatG *scaleMean, ImMatG *m
 	delete resExp;
 	delete resExpSum;
 
-	ImMatG *segmRes = new ImMatG(mask->rows, mask->cols);
+	ImMatG *segmRes = new ImMatG(rows, cols);
 	cudaMemcpy(segmRes->data_d, &((res->data_d)[segmRes->getLength()]), segmRes->getLength()*sizeof(double), cudaMemcpyDeviceToDevice);
 	delete res;
 	return segmRes;
 }
 
-ImMatG *segmentBloodVessels(ImMatG *inputLayerG, ImMatG *mask, ImMatG *dCodes, ImMatG *dMeans, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd){
+ImMatG *segmentBloodVessels(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd){
 	cublasHandle_t handle;
 	cublasCreate(&handle);
 	
 	ImMatG *features = extractFeatures(inputLayerG, dCodes, dMeans, handle);
-	ImMatG *segmRes = classify(features, mask, scaleMean, model, scalesSd, handle);
+	ImMatG *segmRes = classify(features, inputLayerG->rows, inputLayerG->cols, scaleMean, model, scalesSd, handle);
 	delete features;
 	return segmRes;
 }

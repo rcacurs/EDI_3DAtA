@@ -26,9 +26,9 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 //		scalesSd - classifier parameters
 //		handle - cublas context handle
 
-ImMatG * classify(ImMatG * features, ImMatG * mask, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd, cublasHandle_t handle);
+ImMatG * classify(ImMatG * features, int rows, int cols, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd, cublasHandle_t handle);
 
 
-ImMatG *segmentBloodVessels(ImMatG *inputLayerG, ImMatG *mask, ImMatG *dCodes, ImMatG *dMeans, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd);
+ImMatG *segmentBloodVessels(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd);
 
 #endif
