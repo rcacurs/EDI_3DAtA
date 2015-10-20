@@ -49,17 +49,17 @@ public:
 	//		value - value which is filled
 	void fillRow(size_t row, double value);
 
-	
-	//creates matrix allocated on gpu from specified .csv file
-	// paramteres:
-	//		filename - name of the csv file
-	// returns:
-	//		ImMatG* pointer to allocated image object. data alocated on gpu
-	ImMatG *readCSV(std::string fileName);
 
 	// method for getting data to Host memory. copies data from cpu memory to host memory.
 	// returns:
 	//		double * - pointer to memory allocated on host representing data stored in device memory.
 	double *getData();
 };
+
+	//creates matrix allocated on gpu from specified .csv file
+	// paramteres:
+	//		filename - name of the csv file
+	// returns:
+	//		ImMatG* pointer to allocated image object. data alocated on gpu
+	ImMatG *readCSV(std::string fileName);
 #endif

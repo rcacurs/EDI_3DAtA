@@ -112,6 +112,7 @@ ImMatG* readCSV(std::string fileName){
 double *ImMatG::getData(){
 	double * data = new double[getLength()];
 	cudaMemcpy(data, data_d, sizeof(double)*getLength(), cudaMemcpyDeviceToHost);
+	cudaThreadSynchronize();
 	return data;
 }
 
