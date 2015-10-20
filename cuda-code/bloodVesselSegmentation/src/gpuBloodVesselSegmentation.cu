@@ -12,7 +12,7 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 	//feature extraction
 
 	ImMatG *features = new ImMatG(dCodes->rows*pyramid.size() + 1, inputLayerT->rows*inputLayerT->cols);
-
+	delete inputLayerT;
 	for (int i = 0; i < pyramid.size(); i++){
 
 		cudaThreadSynchronize();
@@ -98,6 +98,7 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 			}
 			delete tempFeature;
 		}
+		delete result;
 
 	}
 	pyramid.clear();
@@ -173,5 +174,15 @@ ImMatG * classify(ImMatG * features, ImMatG * mask, ImMatG *scaleMean, ImMatG *m
 	ImMatG *segmRes = new ImMatG(mask->rows, mask->cols);
 	cudaMemcpy(segmRes->data_d, &((res->data_d)[segmRes->getLength()]), segmRes->getLength()*sizeof(double), cudaMemcpyDeviceToDevice);
 	delete res;
+	return segmRes;
+}
+
+ImMatG *segmentBloodVessels(ImMatG *inputLayerG, ImMatG *mask, ImMatG *dCodes, ImMatG *dMeans, ImMatG *scaleMean, ImMatG *model, ImMatG *scalesSd){
+	cublasHandle_t handle;
+	cublasCreate(&handle);
+	
+	ImMatG *features = extractFeatures(inputLayerG, dCodes, dMeans, handle);
+	ImMatG *segmRes = classify(features, mask, scaleMean, model, scalesSd, handle);
+	delete features;
 	return segmRes;
 }
