@@ -2,7 +2,7 @@
 #define __IMAGE_MATRIX_CUH
 
 
-#include<Math.h>
+#include<math.h>
 #include<string>
 #include<fstream>
 #include<sstream>
