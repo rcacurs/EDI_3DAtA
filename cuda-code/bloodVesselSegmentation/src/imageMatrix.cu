@@ -86,7 +86,7 @@ void ImMatG::fillRow(size_t row, double value){
 //		filename - filename of the files
 // returns: image matrix allocated on gpu
 ImMatG* readCSV(std::string fileName){
-	std::ifstream fileStream(fileName);
+	std::ifstream fileStream(fileName.c_str());
 	std::string line;
 	double val;
 	std::vector<double> values;
