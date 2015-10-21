@@ -11,4 +11,4 @@ nvcc --lib --output-file ./bin/bvsegmentation.a\
  ./bin/imageMatrix.o\
  ./bin/gpuConvolution.o\
  ./bin/gpuImageScaling.o\
- ./gin/gpuBloodVesselSegmentation.o
+ ./bin/gpuBloodVesselSegmentation.o
