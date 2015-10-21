@@ -492,13 +492,13 @@ ImMatG * computeIntegralImage(const ImMatG *inputImage){
 	ImMatG *temp = new ImMatG(inputImage->rows, inputImage->cols);
 	int threadsY=1;
 	// compute number of colusmns
-	int p = pow(2,ceil(log2(inputImage->cols)));
+	int p = pow(2.0,ceil(log2((double)(inputImage->cols))));
 	
 	rowScan <<< dim3(1, inputImage->rows/threadsY, 1), dim3(p/2, threadsY, 1), sizeof(double)*threadsY*p>>>(inputImage->data_d, inputImage->rows, inputImage->cols, temp->data_d, false);
 	ImMatG *tempTr = temp->transpose();
 	delete temp;
 	ImMatG *tempTrSc = new ImMatG(tempTr->rows, tempTr->cols);
-	p = pow(2,ceil(log2(tempTrSc->cols)));
+	p = pow(2.0,ceil(log2((double)(tempTrSc->cols))));
 	rowScan << < dim3(1, tempTr->rows / threadsY, 1), dim3(p/2, threadsY, 1), sizeof(double)*threadsY*p >> >(tempTr->data_d, tempTr->rows, tempTr->cols, tempTrSc->data_d, false);
 	ImMatG *result = tempTrSc->transpose();
 	delete tempTr;
@@ -510,13 +510,13 @@ ImMatG * computeIntegralImageSq(const ImMatG *inputImage){
 	ImMatG *temp = new ImMatG(inputImage->rows, inputImage->cols);
 	int threadsY = 1;
 	// compute number of colusmns
-	int p = pow(2, ceil(log2(inputImage->cols)));
+	int p = pow(2.0, ceil(log2((double)(inputImage->cols))));
 
 	rowScan << < dim3(1, inputImage->rows / threadsY, 1), dim3(p / 2, threadsY, 1), sizeof(double)*threadsY*p >> >(inputImage->data_d, inputImage->rows, inputImage->cols, temp->data_d, true);
 	ImMatG *tempTr = temp->transpose();
 	delete temp;
 	ImMatG *tempTrSc = new ImMatG(tempTr->rows, tempTr->cols);
-	p = pow(2, ceil(log2(tempTrSc->cols)));
+	p = pow(2.0, ceil(log2((double)(tempTrSc->cols))));
 	rowScan << < dim3(1, tempTr->rows / threadsY, 1), dim3(p / 2, threadsY, 1), sizeof(double)*threadsY*p >> >(tempTr->data_d, tempTr->rows, tempTr->cols, tempTrSc->data_d, false);
 	ImMatG *result = tempTrSc->transpose();
 	delete tempTr;
