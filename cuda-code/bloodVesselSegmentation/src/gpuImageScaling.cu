@@ -582,7 +582,9 @@ ImMatG * bicubicResize(ImMatG *inputImage, size_t scaling){
 		rowUpscaledT->rows / threadsy, 1),
 		dim3(threadsx, threadsy, 1), sizeof(double) * 4 * scaling >> >(
 		rowUpscaledT->data_d, rowUpscaledT->rows, rowUpscaledT->cols, scaling, scalingCoeffs_d, resultT->data_d);
-
+	
+	free(scalingCoeffs);
+	cudaFree(scalingCoeffs_d);
 	delete rowUpscaled;
 	delete rowUpscaledT;
 	return resultT;// ->transpose();
