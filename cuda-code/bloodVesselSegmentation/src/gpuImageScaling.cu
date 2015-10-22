@@ -612,6 +612,11 @@ std::vector<ImMatG *> ImagePyramidCreator::createPyramid(ImMatG *input){
 	}
 	return pyramid;
 }
+void clearPyramid(std::vector<ImMatG *> vector){
+	for(int i=0; i<vector.size(); i++){
+		delete vector[i];
+	}
+}
 
  
 

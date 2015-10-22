@@ -74,7 +74,6 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 			result->data_d, patchesNoFilterMean->rows);
 		delete patchesNoFilterMean;
 
-
 		for (int j = 0; j < dCodes->rows; j++){
 			ImMatG * tempFeature = new ImMatG(inputLayerG->rows / pow(2, i), inputLayerG->rows / pow(2, i));
 
@@ -84,6 +83,7 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 				cudaMemcpy(tempFeature->data_d, &((result->data_d)[j*tempFeature->getLength()]), sizeof(double)*tempFeature->getLength(), cudaMemcpyDeviceToDevice);
 				ImMatG * tempFeatureT = tempFeature->transpose();
 				cudaMemcpy(&((features->data_d)[j*tempFeature->getLength()]), tempFeatureT->data_d, sizeof(double)*tempFeature->getLength(), cudaMemcpyDeviceToDevice);
+				delete tempFeatureT;
 
 			}
 			else{
@@ -101,6 +101,8 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 		delete result;
 
 	}
+	delete creator;
+	clearPyramid(pyramid);
 	pyramid.clear();
 	cudaMemset(&((features->data_d)[((features->rows) - 1)*features->cols]), 1, sizeof(double)*features->cols);
 	return features;

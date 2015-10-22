@@ -163,5 +163,7 @@ class ImagePyramidCreator{
 		std::vector<ImMatG *> createPyramid(ImMatG * input);
 
 };
+// clears image pyramid (because vector.clear() doesn't dealocate memory allocated with)
+void clearPyramid(std::vector<ImMatG *> vector);
 
 #endif
