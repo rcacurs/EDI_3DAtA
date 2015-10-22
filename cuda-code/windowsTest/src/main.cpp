@@ -30,12 +30,12 @@ int main(int argc, char *argv[]){
 	maskGS.convertTo(maskGS, CV_64FC1);
 	imageGS.convertTo(imageGS, CV_64FC1);
 	// === READING FILTER PARAMETERS =========
-	
-	ImMatG *dMeans = readCSV("./dMean.csv");
-	ImMatG *dCodes = readCSV("./dCodes.csv");
-	ImMatG *scaleMean = readCSV("./scaleparamsMean.csv");
-	ImMatG *scalesSd = readCSV("./scaleparamsSd.csv");
-	ImMatG *model = readCSV("./model.csv");
+	string filterParams = "../../../filter-classifier-parameters/";
+	ImMatG *dMeans = readCSV(filterParams+"dMean.csv");
+	ImMatG *dCodes = readCSV(filterParams+"dCodes.csv");
+	ImMatG *scaleMean = readCSV(filterParams+"scaleparamsMean.csv");
+	ImMatG *scalesSd = readCSV(filterParams+"scaleparamsSd.csv");
+	ImMatG *model = readCSV(filterParams+"model.csv");
 	// ==== convert cv images to ImMatG *
 	ImMatG * imageGPU = new ImMatG(imageGS.rows, imageGS.cols, (double *)(imageGS.data), false);
 	ImMatG * maskGPU = new ImMatG(maskGS.rows, maskGS.cols, (double *)(maskGS.data), false);
