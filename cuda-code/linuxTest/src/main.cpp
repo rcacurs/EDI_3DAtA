@@ -12,13 +12,13 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char *argv[]){
-	int iterations = 50;
+	long int iterations = 100;
 	if(argc<3){
 		cout <<"Input image and mask must be specified!"<<endl;	
 		return 1;
 	}
 	// LOAD FILTER PARAMETERS
-	int tick1,tick2;
+	long int tick1,tick2;
 	string parameterFolder = "../../../filter-classifier-parameters/";
 	ImMatG *dMeans = readCSV(parameterFolder+"dMean.csv");
 	ImMatG *dCodes = readCSV(parameterFolder+"dCodes.csv");
@@ -48,9 +48,9 @@ int main(int argc, char *argv[]){
 	ImMatG * imageGPU = new ImMatG(imageGS.rows, imageGS.cols, (double *)(imageGS.data), false);
 	ImMatG * maskGPU = new ImMatG(maskGS.rows, maskGS.cols, (double *)(maskGS.data), false);
 	
-	tick1 = getTickCount();
 	ImMatG *segmRes;
 	double *dt;
+	tick1 = getTickCount();
 	for(int i=0; i<iterations; i++){
 		segmRes = segmentBloodVessels(imageGPU, dCodes, dMeans, scaleMean, model, scalesSd);
 		dt = segmRes->getData();
@@ -60,7 +60,8 @@ int main(int argc, char *argv[]){
 		}
 	}
 	tick2 = getTickCount();
-	cout <<"One layer segmentation time: "<<1000/iterations*((float)tick2-tick1)/getTickFrequency()<<" [ms]"<<endl;
+	double time = (1000*((double)tick2-tick1)/getTickFrequency())/iterations;
+	cout <<"One layer segmentation time: "<<time<<" [ms]"<<endl;
 
 	Mat resultMat = Mat(segmRes->rows, segmRes->cols, CV_64FC1, (void*)dt);
 	resultMat = resultMat.mul(maskGS);
