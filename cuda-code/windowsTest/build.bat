@@ -1,3 +1,5 @@
+IF NOT EXIST .\bin mkdir bin
+
 nvcc --include-path^
  ..\bloodVesselSegmentation\include,"%OPENCV_INCLUDE%"^
  --library-path ..\bloodVesselSegmentation\bin\,"%CUDA_PATH%\lib\x64","%OPENCV_LIB%"^
