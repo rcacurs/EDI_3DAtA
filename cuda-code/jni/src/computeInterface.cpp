@@ -26,12 +26,12 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 			// std::cout<<scalesSdPtr[i]<<std::endl;
 		// }
 		// move data to GPU by using ImMatG *
-		ImMatG *inputG = new ImMatG(r1, c1, inputPtr, false);
-		ImMatG *dCodesG = new ImMatG(r2, c2, dCodesPtr, false);
-		ImMatG *dMeansG = new ImMatG(r3, c3, dMeansPtr, false);
-		ImMatG *scalesMeanG = new ImMatG(r4, c4, scalesMeanPtr, false);
-		ImMatG *modelG = new ImMatG(r5, c5, modelPtr, false);
-		ImMatG *scalesSdG = new ImMatG(r6, c6, scalesSdPtr, false);
+		ImMatG *inputG = new ImMatG(r1, c1, (double *)inputPtr, false);
+		ImMatG *dCodesG = new ImMatG(r2, c2, (double *)dCodesPtr, false);
+		ImMatG *dMeansG = new ImMatG(r3, c3, (double *)dMeansPtr, false);
+		ImMatG *scalesMeanG = new ImMatG(r4, c4, (double *)scalesMeanPtr, false);
+		ImMatG *modelG = new ImMatG(r5, c5, (double *)modelPtr, false);
+		ImMatG *scalesSdG = new ImMatG(r6, c6, (double *)scalesSdPtr, false);
 		
 		ImMatG *segmRes = segmentBloodVessels(inputG, dCodesG, dMeansG, scalesMeanG, modelG, scalesSdG);
 		double *dt = segmRes->getData();
