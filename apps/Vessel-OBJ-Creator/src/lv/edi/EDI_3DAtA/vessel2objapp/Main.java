@@ -45,9 +45,14 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			System.out.println("Trying to load library");
 			compute = new Compute(); // initialize opencv cuda interface
+			System.out.println("Cuda computation library loaded! Blood vessel segmentation will be performed using gpu");
+			//compute.test();
 		} catch (UnsatisfiedLinkError e1) {
 			// TODO Auto-generated catch block
+			System.out.println("Library for computations using cuda not loaded! Program will");
+			System.out.println(e1.getMessage());
 			compute=null;
 		}
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dCodes.csv"));

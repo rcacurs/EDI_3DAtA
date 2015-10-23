@@ -362,10 +362,17 @@ public class AppController implements Initializable{
 //						
 //						classifier.classify();
 //						
-//						layerVesselSegmentated = classifier.getResult();
+						//layerVesselSegmentated = classifier.getResult();
 						if(Main.compute!=null){
-							double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, Main.codes.data, Main.means.data, 5, Main.codes.numCols, Main.model.data, Main.scaleParamsMean.data, Main.scaleParamsSd.data, layerMask.data);
+							//double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, Main.codes.data, Main.means.data, 5, Main.codes.numCols, Main.model.data, Main.scaleParamsMean.data, Main.scaleParamsSd.data, layerMask.data);
+							double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols,
+	                                   Main.codes.data, Main.codes.numRows, Main.codes.numCols,
+	                                   Main.means.data, Main.means.numRows, Main.means.numCols,
+	                                   Main.scaleParamsMean.data, Main.scaleParamsMean.numRows, Main.scaleParamsMean.numCols,
+	                                   Main.model.data, Main.model.numRows, Main.model.numCols,
+	                                   Main.scaleParamsSd.data, Main.scaleParamsSd.numRows, Main.scaleParamsSd.numCols);
 							//outputImageD = compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, codes.data, means.data, 5, 32, model.data, scaleparamsMean.data, scaleparamsSd.data, maskImage.data);
+							System.out.println("arraysize "+bloodVesselsSegm.length);
 							layerVesselSegmentated = new DenseMatrix64F(layerImage.numRows, layerImage.numCols, true, bloodVesselsSegm);
 						} else{
 							layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
