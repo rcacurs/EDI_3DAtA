@@ -1,9 +1,9 @@
 IF NOT EXIST .\bin mkdir bin
 
-nvcc --include-path "%JAVA_HOME%\include","%JAVA_HOME%\include\win32","%OPENCV_INCLUDE%",^
+nvcc --include-path "%JAVA_HOME%\include","%JAVA_HOME%\include\win32",^
 ..\bloodVesselSegmentation\include^
- --library-path ..\bloodVesselSegmentation\bin\,"%CUDA_PATH%\lib\x64","%OPENCV_LIB%"^
- --library cublas,bvsegmentation,cudadevrt,cudart,opencv_core300,opencv_highgui300^
+ --library-path ..\bloodVesselSegmentation\bin\,"%CUDA_PATH%\lib\x64"^
+ --library cublas,bvsegmentation,cudadevrt,cudart^
  .\src\computeInterface.cpp^
  --shared^
  --machine 64^
