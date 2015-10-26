@@ -71,7 +71,7 @@ __global__ void fillRowKernel(double *data, size_t cols, size_t row, double valu
 	}
 }
 
-void ImMatG::fillRow(size_t row, double value){
+void ImMatG::fillRow(int row, double value){
 	if ((row >= this->rows) || (row < 0)){
 		std::cout << "Index doesn't agree with image size" << std::endl;
 		return;

@@ -47,7 +47,7 @@ public:
 	// fills matrix row with value
 	//		row - row which is filled
 	//		value - value which is filled
-	void fillRow(size_t row, double value);
+	void fillRow(int row, double value);
 
 
 	// method for getting data to Host memory. copies data from cpu memory to host memory.

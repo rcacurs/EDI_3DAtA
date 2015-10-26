@@ -7,7 +7,6 @@
 
 __global__ void bicubicInterpolationKernel(double *inputImage, size_t rows, size_t cols, size_t scaling, double *scalingCoeffs, double*outputImage){
 	
-	int colsUp = cols*scaling;
 	int colIdx = threadIdx.x + blockIdx.x*blockDim.x;
 	int rowIdx = threadIdx.y + blockIdx.y*blockDim.y;
 
