@@ -375,7 +375,6 @@ public class AppController implements Initializable{
 	                                   Main.model.data, Main.model.numRows, Main.model.numCols,
 	                                   Main.scaleParamsSd.data, Main.scaleParamsSd.numRows, Main.scaleParamsSd.numCols);
 							//outputImageD = compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, codes.data, means.data, 5, 32, model.data, scaleparamsMean.data, scaleparamsSd.data, maskImage.data);
-							System.out.println("arraysize "+bloodVesselsSegm.length);
 							layerVesselSegmentated = new DenseMatrix64F(layerImage.numRows, layerImage.numCols, true, bloodVesselsSegm);
 							CommonOps.elementMult(layerVesselSegmentated, layerMask);
 						} else{

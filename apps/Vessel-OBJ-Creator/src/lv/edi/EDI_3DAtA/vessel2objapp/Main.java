@@ -48,11 +48,11 @@ public class Main extends Application {
 		try {
 			System.out.println("Trying to load library");
 			compute = new Compute(); // initialize opencv cuda interface
-			System.out.println("Cuda computation library loaded! Blood vessel segmentation will be performed using gpu");
+			System.out.println("Cuda computation library loaded! Blood vessel segmentation will be performed using GPU");
 			//compute.test();
 		} catch (UnsatisfiedLinkError e1) {
 			// TODO Auto-generated catch block
-			System.out.println("Library for computations using cuda not loaded! Program will");
+			System.out.println("Library for computations using cuda not loaded!");
 			System.out.println(e1.getMessage());
 			compute=null;
 		}
