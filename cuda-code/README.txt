@@ -18,6 +18,11 @@ THIS FOLDER CONTAINS CUDA SOURCE FILES.
  Dependencies:
   - CUDA TOOLKIT (Tested on 6.5 and 7.5), and CUDA_PATH environment should be set
   
+  folder \jni contains build script for java interface of blood vessel segmentation function. buil.bat
+  builds interface library for windows ('computeCudaInterface.dll') . To allow JVM to find this library, 
+  Path environment variable must be set to folder containing library.
+  
+  
   
   
 
