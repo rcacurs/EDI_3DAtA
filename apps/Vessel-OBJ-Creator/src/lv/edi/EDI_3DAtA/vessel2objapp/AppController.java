@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
+import org.ejml.data.D1Matrix64F;
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -365,8 +367,9 @@ public class AppController implements Initializable{
 						//layerVesselSegmentated = classifier.getResult();
 						if(Main.compute!=null){
 							//double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, Main.codes.data, Main.means.data, 5, Main.codes.numCols, Main.model.data, Main.scaleParamsMean.data, Main.scaleParamsSd.data, layerMask.data);
+
 							double[] bloodVesselsSegm = Main.compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols,
-	                                   Main.codes.data, Main.codes.numRows, Main.codes.numCols,
+	                                   Main.codesTr.data, Main.codesTr.numRows, Main.codesTr.numCols,
 	                                   Main.means.data, Main.means.numRows, Main.means.numCols,
 	                                   Main.scaleParamsMean.data, Main.scaleParamsMean.numRows, Main.scaleParamsMean.numCols,
 	                                   Main.model.data, Main.model.numRows, Main.model.numCols,
@@ -374,6 +377,7 @@ public class AppController implements Initializable{
 							//outputImageD = compute.segmentBloodVessels(layerImage.data, layerImage.numRows, layerImage.numCols, codes.data, means.data, 5, 32, model.data, scaleparamsMean.data, scaleparamsSd.data, maskImage.data);
 							System.out.println("arraysize "+bloodVesselsSegm.length);
 							layerVesselSegmentated = new DenseMatrix64F(layerImage.numRows, layerImage.numCols, true, bloodVesselsSegm);
+							CommonOps.elementMult(layerVesselSegmentated, layerMask);
 						} else{
 							layerFeatures = featureExtractor.extractLayerFeatures(layerImage);
 							classifier.setData(layerFeatures);

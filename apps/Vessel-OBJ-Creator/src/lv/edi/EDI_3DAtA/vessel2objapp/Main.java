@@ -28,6 +28,7 @@ public class Main extends Application {
 	static int selectedLayer=100;
 	static DenseMatrix64F means;
 	static DenseMatrix64F codes;
+	static DenseMatrix64F codesTr;
 	static DenseMatrix64F model;
 	static DenseMatrix64F scaleParamsMean;
 	static DenseMatrix64F scaleParamsSd;
@@ -57,6 +58,7 @@ public class Main extends Application {
 		}
 		codes = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dCodes.csv"));
 		CommonOps.transpose(codes);
+		codesTr = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dCodes.csv"));
 		means = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("dMean.csv"));
 		model = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("model.csv"));
 		scaleParamsMean = DenseMatrixConversions.loadCSVtoDenseMatrixFromInputStream(SMFeatureExtractor.class.getResourceAsStream("scaleparamsMean.csv"));
