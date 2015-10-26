@@ -12,7 +12,6 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
  jdoubleArray scalesMean, jint r4, jint c4,
  jdoubleArray  model, jint r5, jint c5,
  jdoubleArray scalesSd, jint r6, jint c6){
-		std::cout << "Looks like it works!" << std::endl;
 		
 		// get pointers to data
 		jdouble *inputPtr = env->GetDoubleArrayElements(input, 0);
