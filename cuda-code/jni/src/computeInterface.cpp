@@ -2,9 +2,8 @@
 #include"../include/computeInterface.h"
 #include<gpuBloodVesselSegmentation.cuh>
 #include<imageMatrix.h>
-#include<opencv2/core/core.hpp>
-#include<opencv2/highgui/highgui.hpp>
-using namespace cv;
+
+using namespace std;
 extern "C"{
 JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Compute_segmentBloodVessels(JNIEnv *env, jobject thisObj,
  jdoubleArray input, jint r1, jint c1,
@@ -32,25 +31,12 @@ JNIEXPORT jdoubleArray JNICALL Java_lv_edi_EDI_13DAtA_opencvcudainterface_Comput
 		ImMatG *scalesMeanG = new ImMatG(r4, c4, (double *)scalesMeanPtr, false);
 		ImMatG *modelG = new ImMatG(r5, c5, (double *)modelPtr, false);
 		ImMatG *scalesSdG = new ImMatG(r6, c6, (double *)scalesSdPtr, false);
-		
+
+												
 		ImMatG *segmRes = segmentBloodVessels(inputG, dCodesG, dMeansG, scalesMeanG, modelG, scalesSdG);
 		double *dt = segmRes->getData();
-		Mat inputImage(r1,c1,CV_64FC1,(void *)inputPtr);
-		imshow("input image", inputImage/255);
 
-		std::cout<<"Segm Res Length "<<segmRes->getLength()<<std::endl;
 		
-		for(int i=0; i<segmRes->getLength(); i++){
-			if(dt[i]>=0.85){
-				dt[i]=1.0;
-			} else{
-				dt[i]=0;
-			}
-		}
-		
-		Mat image(segmRes->rows, segmRes->cols, CV_64FC1, (void *)dt);
-		imshow("test", image);
-		waitKey(0);
 		jdoubleArray result = (env)->NewDoubleArray(segmRes->getLength());
 		(env)->SetDoubleArrayRegion(result, 0, segmRes->getLength(), dt);
 		
