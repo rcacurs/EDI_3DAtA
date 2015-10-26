@@ -75,7 +75,7 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 		delete patchesNoFilterMean;
 
 		for (int j = 0; j < dCodes->rows; j++){
-			ImMatG * tempFeature = new ImMatG(inputLayerG->rows / pow(2, i), inputLayerG->rows / pow(2, i));
+			ImMatG * tempFeature = new ImMatG(inputLayerG->rows / pow(2.0, i), inputLayerG->rows / pow(2.0, i));
 
 
 			if (i == 0){
@@ -89,7 +89,7 @@ ImMatG * extractFeatures(ImMatG *inputLayerG, ImMatG *dCodes, ImMatG *dMeans, cu
 			else{
 
 				cudaMemcpy(tempFeature->data_d, &((result->data_d)[j*tempFeature->getLength()]), sizeof(double)*tempFeature->getLength(), cudaMemcpyDeviceToDevice);
-				ImMatG *tempResized = bicubicResize(tempFeature, pow(2, i));
+				ImMatG *tempResized = bicubicResize(tempFeature, pow(2.0, i));
 
 				int featureIdx = j + i*(dCodes->rows);
 				cudaMemcpy(&((features->data_d)[featureIdx*(tempResized->getLength())]), tempResized->data_d, sizeof(double)*tempResized->getLength(), cudaMemcpyDeviceToDevice);
