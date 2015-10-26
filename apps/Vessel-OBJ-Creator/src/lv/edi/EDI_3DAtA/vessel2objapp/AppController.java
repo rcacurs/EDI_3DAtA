@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
-import org.ejml.data.D1Matrix64F;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
