@@ -78,7 +78,7 @@ void ImMatG::fillRow(int row, double value){
 	}
 
 	int threadNum = 128;
-	fillRowKernel << <dim3(ceil(cols / threadNum), 1, 1), dim3(threadNum, 1, 1) >> >(data_d, cols, row, value);
+	fillRowKernel << <dim3(ceil((double)cols / threadNum), 1, 1), dim3(threadNum, 1, 1) >> >(data_d, cols, row, value);
 }
 
 // creates im mat object from csv file
