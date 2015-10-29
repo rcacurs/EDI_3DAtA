@@ -1,8 +1,16 @@
 package lv.edi.EDI_3DAtA.marchingcubes;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Vector;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -196,19 +204,45 @@ public class MarchingCubes {
 	 * @param filename filename of destination file.
 	 * @throws FileNotFoundException throws if file not found or cannot be created!
  	 */
-	public static void saveVerticesToObj(ArrayList<DenseMatrix64F> vertices, String filename) throws FileNotFoundException{
+	public static void saveVerticesToObj(ArrayList<DenseMatrix64F> vertices, String filename) throws IOException{
 		//ArrayList<Integer> faceIndexes = removeDuplicatePoints(vertices);;
 		
-		PrintWriter writer = new PrintWriter(filename);
+		
+		Vector<String> stringVector = new Vector<String>();
+		long tick1 = System.currentTimeMillis();
 		for(DenseMatrix64F item:vertices){
-			String vertexS = String.format("v %5.2f %5.2f %5.2f", item.get(0), item.get(1), item.get(2));
-			writer.println(vertexS);
+			String vertexS = String.format(Locale.ENGLISH, "v %5.2f %5.2f %5.2f", item.get(0), item.get(1), item.get(2));
+			stringVector.add(vertexS);
 		}
+
 		for(int i=0; i<vertices.size()/3; i++){
 			String indexS = "f " +(i*3+1)+" "+(i*3+2)+" "+(i*3+3);
-			writer.println(indexS);
+			stringVector.add(indexS);
 		}
-		writer.close();
+		
+		long tick2 = System.currentTimeMillis();
+		System.out.printf("Time for forming string vector: %d [ms]\n", tick2-tick1);
+		
+		File textFile = new File(filename);
+		if(textFile.exists()){
+			textFile.delete();
+		}
+		
+		RandomAccessFile RAMFilet = new RandomAccessFile(textFile, "rw");
+		FileChannel rwChannel = RAMFilet.getChannel();
+		
+		tick1 = System.currentTimeMillis();
+		byte[] buffer = String.join("", stringVector).getBytes();
+		tick2 = System.currentTimeMillis();
+		System.out.printf("Time for joining strings %d\n",tick2-tick1);
+		tick1=System.currentTimeMillis();
+		ByteBuffer wrBuf = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, buffer.length);
+		
+		wrBuf.put(buffer);	
+		rwChannel.close();
+		buffer = null;
+		tick2=System.currentTimeMillis();
+		System.out.printf("Time for filling file: %d [ms]\n");
 	}
 	/**
 	 * Getter method for progress property
