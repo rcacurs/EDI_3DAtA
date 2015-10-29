@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -268,18 +269,40 @@ public class AppController implements Initializable{
 				   +(cal.get(Calendar.YEAR))+""
 				   +(cal.get(Calendar.HOUR))+""+
 				   +(cal.get(Calendar.MINUTE))+".obj";
-		try {
-			Main.trMeshData.saveAsObj(fileName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("File sucesfully created!");
-		alert.setHeaderText(null);
-		alert.setResizable(true);
-		alert.setContentText("3D Model exported as file - "+fileName);
-		alert.showAndWait();
+	
+		
+		Alert alertLoading = new Alert(AlertType.INFORMATION);
+		alertLoading.setTitle("Saving...");
+		alertLoading.setHeaderText(null);
+		alertLoading.setResizable(true);
+		alertLoading.setContentText("Saving file...");
+		alertLoading.show();
+		new Thread(){
+			public void run(){
+				try {
+					Main.trMeshData.saveAsObj(fileName);
+
+					Platform.runLater(new Runnable(){
+						public void run(){
+							alertLoading.close();
+							Alert alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("File sucesfully created!");
+							alert.setHeaderText(null);
+							alert.setResizable(true);
+							alert.setContentText("3D Model exported as file - "+fileName);
+							alert.showAndWait();
+							
+						}
+					});
+					
+				} catch (IOException e) {
+						// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
+		
 	}
 	@FXML
 	public void filterLayerSelecteTxtField(KeyEvent arg0){
