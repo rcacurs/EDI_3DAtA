@@ -2,14 +2,10 @@ package lv.edi.EDI_3DAtA.marchingcubes;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Locale;
-import java.util.Vector;
-
-import org.ejml.data.DenseMatrix64F;
 
 /**
  * 

@@ -2,9 +2,7 @@ package lv.edi.EDI_3DAtA.marchingcubes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -240,6 +238,7 @@ public class MarchingCubes {
 		
 		wrBuf.put(buffer);	
 		rwChannel.close();
+		RAMFilet.close();
 		buffer = null;
 		tick2=System.currentTimeMillis();
 		System.out.printf("Time for filling file: %d [ms]\n");
