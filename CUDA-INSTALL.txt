@@ -11,7 +11,7 @@ tiek norâdîts relatîvi pret programmatûras projekta direktoriju
 * JAVA development kit - JDK ( lejupielâde: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 !Piezîme: JDK nav tas pats, ka JRE. JDK nepiecieðams, lai varçtu
-nokompilçt CUDA programmas kodu, kuru iespçjams iezsaukt no JAVA
+nokompilçt CUDA programmas kodu, kuru bûtu iespçjams iezsaukt no JAVA
 aplikâcijas. 
 
 Jâpârliecinâs vai ir izveidoti sekojoði 'Environment
