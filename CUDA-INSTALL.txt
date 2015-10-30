@@ -1,0 +1,95 @@
+Lai nodroðinâtu aplikâcijas aprçíinu izpildi uz nVidia grafiskâs
+kartes nepiecieðama CUDA programmas koda kompilâcija.
+
+Piezîme! Turpmâk vietâs, kur norâdîts relatîvais sistçmas ceïð, tas
+tiek norâdîts relatîvi pret programmatûras projekta direktoriju
+(vietu, kur atrodâs ðis fails)
+
+1. Nepiecieðamâ programmatûra:
+
+* CUDA TOOLKIT (lejupielâde: https://developer.nvidia.com/cuda-toolkit)
+* JAVA development kit - JDK ( lejupielâde: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
+!Piezîme: JDK nav tas pats, ka JRE. JDK nepiecieðams, lai varçtu
+nokompilçt CUDA programmas kodu, kuru iespçjams iezsaukt no JAVA
+aplikâcijas. 
+
+Jâpârliecinâs vai ir izveidoti sekojoði 'Environment
+variables':
+
+* CUDA_PATH
+* JAVA_HOME
+
+Windows vidç tos var atrast: Control Panel->System->Advanced System
+Settings->Environment->Variables.
+Ja kâds no ðiem nav izveidots, tad tas jâizveido, ar vçrtîbu ðim
+mainîgajam uz vietu sistçmâ, kur atrodâs attiecîgâs programmatûras
+instalâcija, piemçram:
+
+* CUDA_PATH - C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0
+* JAVA_HOME - C:\Program Files\Java\jdk1.8.0_60
+
+2. CUDA koda kompilçðana:
+
+Kompilçðanai windows vidç ir pieejami build skripti. Lai varçtu sekot
+lîdzi vai kompilçðanas brîdî nav kâdas kïûdas, vçlams tos izpildît
+komandrindâ.Izpildâmais skripts jâizpilda atrodoties direktorijâ, kurâ
+atrodas skripts.
+
+2.1 Asinsvadu segmentçðanas bibliotçkas kompilçðanas skripts atrodas
+direktorijâ:
+
+* .\cuda-code\bloodVesselSegmentation
+
+Skripta izpildîðana no komandrindas:
+
+* .\build.bat
+
+Ja kompilâcija ir bijusi veikmsîga, direktorijâ, kurâ atrodas build
+skripts jâbût jaunai direktorijai - bin, kurâ jâbût failam
+bvsegmentation.lib
+
+2.2 Bibliotçkas Java interfeisa kompilçðanas skripts atrodas
+direktorijâ:
+
+* .\cuda-code\jni
+
+Skripta izpildîðana no komandrindas:
+
+* .\build.bat
+
+Ja kompilâcija ir bijusi veikmsîga, direktorijâ, kurâ atrodas build
+skripts jâbût jaunai direktorijai - bin, kurâ jâbût failam
+computeCudaInterface.dll
+
+Pçc komilçðanas sekojoðâ direktorija jâpievieno 'Path' Environment
+mainîgajam (Jânorâda pilnais sistçmas ceïð):
+
+* .\cuda-code\jni\bin
+
+Pçc mainîgâ uzstâdîðanas ieteicams pârstrartçt komandrindu.
+
+3. Pârbaude vai aplikâcija lieto grafisko karti
+   aprçíiniem. 
+
+Aplikâcijas izpildâmais fails:
+
+* .\apps\vessel-extract.jar
+
+Lai pârbaudîtu vai aplikâcija veic aprçíinus uz grafiskâs kartes
+aplikâciju iteiecams startçt no komandrindas, ar komandu:
+
+* java - jar vessel-extract.jar
+
+Ja kompilçðana bijusi veiksmîga, komandrindâ jâbût sekojoðam
+paziòojumam:
+
+Cuda computation library loaded! Blood vessel segmentation will be
+performed using GPU
+
+Aplikâciju iespçjams palaist ar dubultklikðíi, bez komandrindas.
+
+
+
+
+
